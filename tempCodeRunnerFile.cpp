@@ -1,2 +1,3 @@
-ext;
-        // temp->next=temp->next->next;
+c.pop();
+      c.push(10);
+      c.push(10);
