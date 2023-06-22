@@ -752,7 +752,7 @@ class Solution
 {
 public:
     int largestRectangleArea(vector<int> &heights)
-    { 
+    {
         int n = heights.size();
         vector<int> prevMin(n);
         vector<int> afterMin(n);
@@ -777,7 +777,7 @@ public:
         }
         stack<pair<int, int>> s1;
         s1.push(make_pair(-1, n));
-        for (int i = n-1; i >=0; i--)
+        for (int i = n - 1; i >= 0; i--)
         {
             if (s1.top().first < heights[i])
             {
@@ -786,7 +786,7 @@ public:
             }
             else
             {
-                while (s1.top().first >=heights[i])
+                while (s1.top().first >= heights[i])
                 {
                     s1.pop();
                 }
@@ -794,12 +794,293 @@ public:
                 s1.push(make_pair(heights[i], i));
             }
         }
-        int maxArea=INT_MIN;
-        for(int i=0;i<n;i++){
-            if((heights[i]*(afterMin[i]-prevMin[i]-1))>maxArea)maxArea=heights[i]*(afterMin[i]-prevMin[i]-1);
+        int maxArea = INT_MIN;
+        for (int i = 0; i < n; i++)
+        {
+            if ((heights[i] * (afterMin[i] - prevMin[i] - 1)) > maxArea)
+                maxArea = heights[i] * (afterMin[i] - prevMin[i] - 1);
         }
         return maxArea;
     }
+};
+class Solution
+{
+public:
+    int findCelebrity(int n, vector<vector<int>> &knows, int i = 1)
+    {
+        for (auto j = i + 1; j <= n; ++j)
+            if (knows[i][j])
+                i = j;
+        for (auto j = 1; j < i; ++j)
+            if (knows[i][j])
+                return -1;
+        for (auto j = 1; j <= n; ++j)
+            if (i != j && !knows[j][i])
+                return -1;
+        return i;
+    }
+    // Function to find if there is a celebrity in the party or not.
+    int celebrity(vector<vector<int>> &M, int n)
+    {
+        // code here
+        stack<int> s;
+
+        for (int i = 0; i < n; i++)
+        {
+            s.push(i);
+        }
+        while (s.size() <= 1)
+        {
+            int a = s.top();
+            s.pop();
+            int b = s.top();
+            s.pop();
+            if (M[a][b] == 1)
+            {
+                if (M[b][a] == 0)
+                    s.push(b);
+            }
+            else
+            {
+                if (M[b][a] == 1)
+                    s.push(a);
+            }
+        }
+        if (s.empty())
+            return -1;
+        for (int i = 0; i < n; i++)
+        {
+            if (M[s.top()][i] == 1)
+                return -1;
+            if (i != s.top() && M[i][s.top()] == 0)
+                return -1;
+        }
+        return s.top();
+    }
+};
+class Solution
+{
+    bool istrust(int a, int b, vector<vector<int>> &trust)
+    {
+        vector<int> x = {a, b};
+        if (find(trust.begin(), trust.end(), x) != trust.end())
+        {
+            return true;
+        }
+        return false;
+    }
+
+public:
+    int findJudge(int n, vector<vector<int>> &trust)
+    {
+
+        int n = trust.size();
+        stack<int> s;
+        for (int i = 0; i < n; i++)
+        {
+            s.push(i);
+        }
+        while (s.size() > 1)
+        {
+            int a = s.top();
+            s.pop();
+            int b = s.top();
+            s.pop();
+
+            if (istrust(a, b, trust))
+            {
+                s.push(a);
+            }
+            else
+            {
+                s.push(b);
+            }
+        }
+        if (s.empty())
+            return -1;
+        for (int i = 0; i < n; i++)
+        {
+        }
+    }
+};
+class Solution
+{
+public:
+    int findJudge(int n, vector<vector<int>> &trust)
+    {
+        int m = trust.size();
+        vector<int> judge(n + 1);
+
+        for (int i = 0; i < m; i++)
+        {
+            judge[trust[i][0]]--;
+            judge[trust[i][1]]++;
+        }
+        for (int i = 1; i < n+1; i++)
+        {
+            if (judge[i] == n-1)
+                return i;
+        }
+        return -1;
+    }
+};
+class Solution {
+    int largestRectangleArea(vector<int> &heights)
+    {
+        int n = heights.size();
+        vector<int> prevMin(n);
+        vector<int> afterMin(n);
+        stack<pair<int, int>> s;
+        s.push(make_pair(-1, -1));
+        for (int i = 0; i < n; i++)
+        {
+            if (s.top().first < heights[i])
+            {
+                prevMin[i] = s.top().second;
+                s.push(make_pair(heights[i], i));
+            }
+            else
+            {
+                while (s.top().first >= heights[i])
+                {
+                    s.pop();
+                }
+                prevMin[i] = s.top().second;
+                s.push(make_pair(heights[i], i));
+            }
+        }
+        stack<pair<int, int>> s1;
+        s1.push(make_pair(-1, n));
+        for (int i = n - 1; i >= 0; i--)
+        {
+            if (s1.top().first < heights[i])
+            {
+                afterMin[i] = s1.top().second;
+                s1.push(make_pair(heights[i], i));
+            }
+            else
+            {
+                while (s1.top().first >= heights[i])
+                {
+                    s1.pop();
+                }
+                afterMin[i] = s1.top().second;
+                s1.push(make_pair(heights[i], i));
+            }
+        }
+        int maxArea = INT_MIN;
+        for (int i = 0; i < n; i++)
+        {
+            if ((heights[i] * (afterMin[i] - prevMin[i] - 1)) > maxArea)
+                maxArea = heights[i] * (afterMin[i] - prevMin[i] - 1);
+        }
+        return maxArea;
+    }
+public:
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        int n=matrix.size();
+        int m=matrix[0].size();
+        vector<vector<int>> matrix2(n,vector<int>(m));
+         for(int i=0;i<n;i++){
+           for(int j=0;j<m;j++){
+            if(i==0){
+               if(matrix[i][j]=='0') matrix2[i][j]=0;
+               else if(matrix[i][j]=='1') matrix2[i][j]=1;
+            }else{
+               if(matrix[i][j]=='0'){
+                matrix2[i][j]=0;
+               } else{
+                matrix2[i][j]=1+matrix2[i-1][j];
+               }
+            }
+           }
+         }
+         int curArea=0;
+         int maxArea=0;
+       for(int i=0;i<n;i++){
+        curArea=largestRectangleArea(matrix2[i]);
+           maxArea=maxArea>curArea?maxArea:curArea;
+       }
+       return maxArea;
+    }
+};
+
+#include <bits/stdc++.h> 
+class NStack
+{
+    int *arr;
+    int *next;
+    int *top;
+    int freSpace;
+public:
+    // Initialize your data structure.
+    NStack(int N, int S)
+    {
+        // Write your code here.
+        arr=new int(S);
+        top=new int(N);
+        next=new int(S);
+        freSpace=0;
+        for(int i=0;i<N;i++){
+            top[i]=-1;
+        }
+          for(int i=0;i<S-1;i++){
+            next[i]=i+1;
+        }
+        next[S-1]=-1;
+    }
+
+    // Pushes 'X' into the Mth stack. Returns true if it gets pushed into the stack, and false otherwise.
+    bool push(int x, int m)
+    {
+        // Write your code here.
+        if(freSpace==-1)return false;
+        int index;
+        index=freSpace;
+        freSpace=next[index]; //next of free space;
+        
+        next[index]=top[m-1];
+        top[m-1]=index;
+        arr[index]=x;
+        return true;
+    }
+ 
+    // Pops top element from Mth Stack. Returns -1 if the stack is empty, otherwise returns the popped element.
+    int pop(int m)
+    {
+        // Write your code here.
+        if(top[m-1]==-1)return -1;
+        int temp=top[m-1];
+        top[m-1]=next[temp];
+        next[temp]=freSpace;
+        freSpace=temp;
+        return arr[temp];
+    }
+};
+
+
+class Solution{
+    int minEle;
+    stack<int> s;
+    public:
+    
+       /*returns min element from stack*/
+       int getMin(){
+           
+           //Write your code here
+       }
+       
+       /*returns poped element from stack*/
+       int pop(){
+           
+           //Write your code here
+       }
+       
+       /*push element x into the stack*/
+       void push(int x){
+           
+           //Write your code here
+       }
 };
 int findMinimumCost(string s)
 {
