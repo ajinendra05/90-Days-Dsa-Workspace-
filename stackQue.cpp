@@ -1209,3 +1209,57 @@ bool findRedundantBrackets(string &s)
     }
     return true;
 }
+
+
+
+class NStack
+{
+    int *arr;
+    int *next;
+    int *top;
+    int freSpace;
+public:
+    // Initialize your data structure.
+    NStack(int N, int S)
+    {
+        // Write your code here.
+        arr=new int(S);
+        top=new int(N);
+        next=new int(S);
+        freSpace=0;
+        for(int i=0;i<N;i++){
+            top[i]=-1;
+        }
+          for(int i=0;i<S-1;i++){
+            next[i]=i+1;
+        }
+        next[S-1]=-1;
+    }
+
+    // Pushes 'X' into the Mth stack. Returns true if it gets pushed into the stack, and false otherwise.
+    bool push(int x, int m)
+    {
+        // Write your code here.
+        if(freSpace==-1)return false;
+        int index;
+        index=freSpace;
+        freSpace=next[index]; //next of free space;
+        
+        next[index]=top[m-1];
+        top[m-1]=index;
+        arr[index]=x;
+        return true;
+    }
+ 
+    // Pops top element from Mth Stack. Returns -1 if the stack is empty, otherwise returns the popped element.
+    int pop(int m)
+    {
+        // Write your code here.
+        if(top[m-1]==-1)return -1;
+        int temp=top[m-1];
+        top[m-1]=next[temp];
+        next[temp]=freSpace;
+        freSpace=temp;
+        return arr[temp];
+    }
+};
