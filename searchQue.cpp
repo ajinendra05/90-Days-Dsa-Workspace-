@@ -258,20 +258,20 @@ public:
         int s = 0;
         int e = arr.size() - 1;
         int mid;
-        int m1,m2;
+        int m1, m2;
         while (s <= e)
         {
 
-            if(s==e)return s;
+            if (s == e)
+                return s;
             mid = s + (e - s) / 2;
-            m1=s+(mid-s)/2;
-            m2=mid+(e-mid)/2;
+            m1 = s + (mid - s) / 2;
+            m2 = mid + (e - mid) / 2;
 
-               
-            if (arr[s] <arr[m1]&&arr[m1]<arr[mid] )
-                s = mid ;
+            if (arr[s] < arr[m1] && arr[m1] < arr[mid])
+                s = mid;
             else
-                e = mid ;
+                e = mid;
         }
         return s;
     }
@@ -282,27 +282,30 @@ class Solution
 public:
     int peakIndexInMountainArray(vector<int> &arr)
     {
-        if(arr.size()==3)return 1;
+        if (arr.size() == 3)
+            return 1;
 
         int s = 0;
         int e = arr.size() - 1;
         int mid;
-        int m1,m2;
+        int m1, m2;
         while (s <= e)
         {
             mid = s + (e - s) / 2;
-       
 
-            if(arr[mid-1]<arr[mid]&& arr[mid]>arr[mid+1]){
+            if (arr[mid - 1] < arr[mid] && arr[mid] > arr[mid + 1])
+            {
                 return mid;
-            }    
-            if(arr[mid-1]<arr[mid]){
-                s=mid;
-            }else{
-                e=mid+1;
+            }
+            if (arr[mid - 1] < arr[mid])
+            {
+                s = mid;
+            }
+            else
+            {
+                e = mid + 1;
             }
         }
-
 
         return mid;
     }
@@ -313,199 +316,279 @@ class Solution
 public:
     int peakIndexInMountainArray(vector<int> &arr)
     {
-        if(arr.size()==3)return 1;
+        if (arr.size() == 3)
+            return 1;
 
         int s = 0;
         int e = arr.size() - 1;
         int mid;
-        int m1,m2;
+        int m1, m2;
         while (s != e)
         {
             mid = s + (e - s) / 2;
-       
 
-            if(arr[mid]>arr[mid+1]){
-                e=mid;
-            }else{
-                s=mid+1;
+            if (arr[mid] > arr[mid + 1])
+            {
+                e = mid;
+            }
+            else
+            {
+                s = mid + 1;
             }
         }
 
-        
         return s;
     }
 };
 
-
-class Solution {
-
+class Solution
+{
 
 public:
-    int search(vector<int>& arr, int target) {
+    int search(vector<int> &arr, int target)
+    {
         int s = 0;
-    int e = arr.size() - 1;
-    if(e<3){
-       for(int i=0;i<=e;i++){
-           if(arr[i]==target)return i;
-          
-       }
+        int e = arr.size() - 1;
+        if (e < 3)
+        {
+            for (int i = 0; i <= e; i++)
+            {
+                if (arr[i] == target)
+                    return i;
+            }
+            return -1;
+        }
+        int mid;
+        while (s != e)
+        {
+
+            mid = s + (e - s) / 2;
+
+            if (arr[mid] < arr[s])
+                e = mid - 1;
+            else
+                s == mid ? s = mid + 1 : s = mid;
+        }
+
+        int pivit = s;
+        s = 0;
+        e = pivit;
+        while (s <= e)
+        {
+            mid = s + (e - s) / 2;
+            if (arr[mid] == target)
+                return mid;
+            if (arr[mid] < target)
+                s = mid + 1;
+            else
+                e = mid - 1;
+        }
+        s = pivit + 1;
+        e = arr.size() - 1;
+        while (s <= e)
+        {
+            mid = s + (e - s) / 2;
+            if (arr[mid] == target)
+                return mid;
+            if (arr[mid] < target)
+                s = mid + 1;
+            else
+                e = mid - 1;
+        }
         return -1;
-    }
-    int mid;
-    while (s != e)
-    {
-
-        mid = s + (e - s) / 2;
-        
-        
-        if (arr[mid] < arr[s])
-            e=mid-1;
-        else
-           s==mid?s=mid+1: s=mid;
-    }
-
-    int pivit=s;
-    s=0;
-    e=pivit;
-     while (s <= e)
-    {
-        mid = s + (e - s) / 2;
-        if (arr[mid] == target)
-            return mid;
-        if (arr[mid] < target)
-            s = mid + 1;
-        else
-            e = mid - 1;
-    }
-    s=pivit+1;
-    e=arr.size()-1;
-     while (s <= e)
-    {
-        mid = s + (e - s) / 2;
-        if (arr[mid] == target)
-            return mid;
-        if (arr[mid] < target)
-            s = mid + 1;
-        else
-            e = mid - 1;
-    }
-    return -1;
-    
     }
 };
 
-
-class Solution {
-
+class Solution
+{
 
 public:
-    int search(vector<int>& arr, int target) {
+    int search(vector<int> &arr, int target)
+    {
         int s = 0;
-    int e = arr.size() - 1;
-    if(e<3){
-       for(int i=0;i<=e;i++){
-           if(arr[i]==target)return i;
-          
-       }
+        int e = arr.size() - 1;
+        if (e < 3)
+        {
+            for (int i = 0; i <= e; i++)
+            {
+                if (arr[i] == target)
+                    return i;
+            }
+            return -1;
+        }
+        int mid;
+        while (s != e)
+        {
+
+            mid = s + (e - s) / 2;
+
+            if (arr[mid] < arr[s])
+                e = mid - 1;
+            else if (arr[mid] > arr[mid + 1])
+            {
+                s = mid;
+                break;
+            }
+            else
+                s = mid + 1;
+        }
+
+        int pivit = s;
+        s = 0;
+        e = pivit;
+        while (s <= e)
+        {
+            mid = s + (e - s) / 2;
+            if (arr[mid] == target)
+                return mid;
+            if (arr[mid] < target)
+                s = mid + 1;
+            else
+                e = mid - 1;
+        }
+        s = pivit + 1;
+        e = arr.size() - 1;
+        while (s <= e)
+        {
+            mid = s + (e - s) / 2;
+            if (arr[mid] == target)
+                return mid;
+            if (arr[mid] < target)
+                s = mid + 1;
+            else
+                e = mid - 1;
+        }
         return -1;
-    }
-    int mid;
-    while (s != e)
-    {
-
-        mid = s + (e - s) / 2;
-        
-        
-        if (arr[mid] < arr[s])
-            e=mid-1;
-        else if(arr[mid]>arr[mid+1]){
-            s=mid;
-            break;
-        }else 
-           s=mid+1;
-    }
-
-    int pivit=s;
-    s=0;
-    e=pivit;
-     while (s <= e)
-    {
-        mid = s + (e - s) / 2;
-        if (arr[mid] == target)
-            return mid;
-        if (arr[mid] < target)
-            s = mid + 1;
-        else
-            e = mid - 1;
-    }
-    s=pivit+1;
-    e=arr.size()-1;
-     while (s <= e)
-    {
-        mid = s + (e - s) / 2;
-        if (arr[mid] == target)
-            return mid;
-        if (arr[mid] < target)
-            s = mid + 1;
-        else
-            e = mid - 1;
-    }
-    return -1;
-    
     }
 };
 
-class Solution {
-
+class Solution
+{
 
 public:
-    int search(vector<int>& arr, int target) {
+    int search(vector<int> &arr, int target)
+    {
         int s = 0;
-    int e = arr.size() - 1;
-   
-    int mid;
-    
-    while (s != e)
-    {
+        int e = arr.size() - 1;
 
-        mid = s + (e - s) / 2;
-        
-        
-        if (arr[mid] < arr[s])
-            e=mid-1;    
-        else if(arr[mid]>arr[mid+1]){
-            s=mid;
-            break;
-        }else 
-           s=mid+1;
-    }
+        int mid;
 
-    int pivit=s;
-    s=0;
-    e=pivit;
-     while (s <= e)
-    {
-        mid = s + (e - s) / 2;
-        if (arr[mid] == target)
-            return mid;
-        if (arr[mid] < target)
-            s = mid + 1;
-        else
-            e = mid - 1;
+        while (s != e)
+        {
+
+            mid = s + (e - s) / 2;
+
+            if (arr[mid] < arr[s])
+                e = mid - 1;
+            else if (arr[mid] > arr[mid + 1])
+            {
+                s = mid;
+                break;
+            }
+            else
+                s = mid + 1;
+        }
+
+        int pivit = s;
+        s = 0;
+        e = pivit;
+        while (s <= e)
+        {
+            mid = s + (e - s) / 2;
+            if (arr[mid] == target)
+                return mid;
+            if (arr[mid] < target)
+                s = mid + 1;
+            else
+                e = mid - 1;
+        }
+        s = pivit + 1;
+        e = arr.size() - 1;
+        while (s <= e)
+        {
+            mid = s + (e - s) / 2;
+            if (arr[mid] == target)
+                return mid;
+            if (arr[mid] < target)
+                s = mid + 1;
+            else
+                e = mid - 1;
+        }
+        return -1;
     }
-    s=pivit+1;
-    e=arr.size()-1;
-     while (s <= e)
+};
+
+class Solution
+{
+public:
+    double findMedianSortedArrays(vector<int> &nums1, vector<int> &nums2)
     {
-        mid = s + (e - s) / 2;
-        if (arr[mid] == target)
-            return mid;
-        if (arr[mid] < target)
-            s = mid + 1;
-        else
-            e = mid - 1;
+        int s1 = 0, s2 = 0, n = nums1.size(), m = nums2.size();
+        int e1=n-1, e2=m-1;
+        int siz =  (n + m + 1) / 2;
+        int m1,m2;
+        double ans;
+        while(s1<=e1){
+            m1=(s1+e1)/2;
+            m2=siz-(m1+1);
+
+           if(nums1[m1]<nums2[m2]&&nums2[m2-1]<nums1[m1+1]){
+             if((n + n) % 2 == 0){
+                ans=min(nums1[m1],nums2[m2-1])/2LL+max(nums1[m1+1],nums2[m2])/2LL;
+                return ans;
+
+             }else{
+                ans=min(nums1[m1],nums2[m2-1]);
+                return ans;
+             }
+           }
+           if(nums1[m1]>nums2[m2]){
+            e1=m1-1;
+           }else{
+            s1=m1+1;
+           }
+
+
+        }
     }
-    return -1;
-    
+};
+
+class Solution
+{
+public:
+    double findMedianSortedArrays(vector<int> &nums1, vector<int> &nums2)
+    {
+        int s1 = 0, s2 = 0, n = nums1.size(), m = nums2.size();
+        int e1=n, e2=m;
+        int siz =  (n + m + 1) / 2;
+        int m1,m2;
+        double ans;
+        while(s1<=e1){
+            m1=(s1+e1)/2;
+            m2=siz-(m1);
+
+            int l1=m1==0?INT_MIN:nums1[m1-1];
+            int l2=m2==0?INT_MIN:nums2[m2-1];
+            int r1=m1==n?INT_MAX:nums1[m1];
+            int r2=m2==m?INT_MAX:nums2[m2];
+
+           if(l1<r2&&l2<r1){
+             if((n + n) % 2 == 0){
+                ans=min(l1,l2)/2LL+max(r1,r2)/2LL;
+                return ans;
+
+             }else{
+                ans=min(l1,l2);
+                return ans;
+             }
+           }
+           if(l1>r2){
+            e1=m1-1;
+           }else{
+            s1=m1+1;
+           }
+
+
+        }
     }
 };
