@@ -592,3 +592,50 @@ public:
         }
     }
 };
+
+//Agressive Cow
+class Solution {
+    bool isPossible(int mid, int k, vector<int> &nums){
+        int cow ;
+        
+    }
+public:
+
+    int solve(int n, int k, vector<int> &nums) {
+    
+        // Write your code here
+        sort(nums.begin(),nums.end());
+        int s=1;
+        int max=*max_element(nums.begin(),nums.end());
+        int min=*min_element(nums.begin(),nums.end());
+        int e=max;
+        
+        int mid;
+        int p=1;
+        int ans=-1;
+        int last=0;
+        while(s<=e){
+            p=1;
+            
+            last=nums[0];
+            mid=s+(e-s)/2;
+            
+            for(int i=0;i<n;i++){
+                if(nums[i]-last>=mid){
+                   p++;
+                   last=nums[i];
+                    
+                }
+            }
+           
+
+            if(p<k)e=mid-1;
+            else{
+                ans=mid;
+                s=mid+1;}
+        }
+
+        return ans;
+        
+    }
+};

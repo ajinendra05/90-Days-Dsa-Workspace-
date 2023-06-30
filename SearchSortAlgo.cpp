@@ -353,6 +353,42 @@ void SelectionSort(int *arr, int n)
         arr[max] = temp;
     }
 }
+// Insertion Sort
+void InsertionSort(int arr[], int n)
+{
+    bool flag = false;
+    for (int i = 0; i < n - 1; i++)
+    {
+
+        for (int j = i + 1; j > 0; j--)
+        {
+
+            if (arr[j] < arr[j - 1])
+            {
+                swap(arr[j], arr[j - 1]);
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+}
+// Cycle Sort
+void CycleSort(int *arr, int n)
+{
+    int s = 0;
+    for (int i = 0; i < n; i++)
+    {
+        while (arr[i] != i + 1)
+        {
+            swap(arr[i], arr[arr[i] - 1]);
+            s++;
+        }
+        if (s == n)
+            break;
+    }
+}
 int main()
 {
 
@@ -361,14 +397,63 @@ int main()
     // vector<int> x = {4, 2, 5, 9, 1, 6, 7, 3, 2, 12, 54};
     int x[] = {4, 2, -5, 9, 1, 6, 7, 3, 2, 12, 54};
     int y[] = {5, 7, 4, 6, 2, 1, 2};
+    int k[] = {3, 5, 2, 1, 4};
+    vector<int> d = {1, 4, 5, 8, 7, 6, 3, -1};
+
     // MergeSort(x, 0, x.size() - 1);
     // QuickSort2(x, 0, 10);
     // QuickSort2(y, 0, 6);
     // BubbleSort(x, 10);
-    SelectionSort(x,10);
-    for (auto z : x)
+    // SelectionSort(x,10);
+    InsertionSort(x, 10);
+    CycleSort(k, 5);
+    for (auto z : k)
         cout << z << "  ";
 
     cout << binarySearch(14, arr2, 8) << endl;
     cout << OrderAgnosticBS(arr, 14, 8);
 }
+
+class Solution
+{
+public:
+    // Function to find minimum number of pages.
+    int findPages(int a[], int N, int M)
+    {
+        // code heres
+        int s = *max_element(a, a + N);
+        int e = accumulate(a, a + N, 0);
+        int mid;
+        int count = 0;
+        int sum = 0;
+        while (s <= e)
+        {
+            mid = (s + e) / 2;
+            count = 0;
+            sum = 0;
+            for (int i = 0; i < N; i++)
+            {
+                if (sum + a[i] > mid)
+                {
+                    sum = a[i];
+                    count++;
+                }
+                else
+                {
+                    sum += a[i];
+                }
+            }
+            count++;
+            if (count <= M)
+            {
+                e = mid;
+            }
+            else
+            {
+                s = mid + 1;
+            }
+        }
+        return mid;
+    }
+};
+
