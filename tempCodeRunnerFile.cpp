@@ -1,1 +1,8 @@
-5 4 2 -1 -1 6 9 -1 -1 8 -1 -1 3 7 -1 -1 -1
+void preorder(Node *node)
+    {
+        if (node == NULL)
+            return;
+        cout << node->val << " ";
+        preorder(node->left);
+        preorder(node->right);
+    }

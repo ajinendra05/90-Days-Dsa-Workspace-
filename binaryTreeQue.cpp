@@ -2,10 +2,199 @@
 
 using namespace std;
 
+
+
+class Node {
+public:
+    bool val;
+    bool isLeaf;
+    Node* topLeft;
+    Node* topRight;
+    Node* bottomLeft;
+    Node* bottomRight;
+    
+    Node() {
+        val = false;
+        isLeaf = false;
+        topLeft = NULL;
+        topRight = NULL;
+        bottomLeft = NULL;
+        bottomRight = NULL;
+    }
+    
+    Node(bool _val, bool _isLeaf) {
+        val = _val;
+        isLeaf = _isLeaf;
+        topLeft = NULL;
+        topRight = NULL;
+        bottomLeft = NULL;
+        bottomRight = NULL;
+    }
+    
+    Node(bool _val, bool _isLeaf, Node* _topLeft, Node* _topRight, Node* _bottomLeft, Node* _bottomRight) {
+        val = _val;
+        isLeaf = _isLeaf;
+        topLeft = _topLeft;
+        topRight = _topRight;
+        bottomLeft = _bottomLeft;
+        bottomRight = _bottomRight;
+    }  
+};
+
+
+class Solution {
+    Node* helper(vector<vector<int>>& grid,int top,int rit,int btm,int lft){
+        cout<<"in";
+        if(top>btm||rit>lft)return NULL;
+        int n=grid.size();
+        if(top<0||top>=n||rit<0||rit>=n||btm<0||btm>=n||lft<0||lft>=n)return NULL;
+        
+        int sum;
+        cout<<"in";
+        for(int i=top;i<=btm;i++){
+            sum+=accumulate(grid[i].begin()+rit,grid[i].end()+lft,0);
+        }
+        
+        cout<<"in";
+        if(sum==0){
+            Node* node=new Node(0,1);
+            return node;
+        }
+        if(sum==(((btm-top)+1)*((lft-rit)+1))){
+            Node* node=new Node(1,1);
+            return node;
+        }
+        cout<<"in";
+        Node* node=new Node(1,0);
+        int verticalMid=(top+btm)/2;
+        int horizontalMid=(lft+rit)/2;   
+        node->topLeft=helper(grid,top,rit,verticalMid,horizontalMid);
+        node->topRight=helper(grid,top,horizontalMid+1,verticalMid,lft);
+        node->bottomLeft=helper(grid,verticalMid+1,rit,btm,horizontalMid);
+        node->bottomRight=helper(grid,verticalMid+1,horizontalMid+1,btm,lft);
+        cout<<"out";
+        return node; 
+    }
+public: 
+    Node* construct(vector<vector<int>>& grid) {
+        return helper(grid,0,0,grid.size()-1,grid.size()-1);
+    }
+};
+
+/*
 struct Node
 {
     int data;
     Node *left, *right;
+};
+
+class Solution
+{
+public:
+    int minTime(Node *root, int target)
+    {
+        // Your code goes here
+        unordered_map<Node *, Node *> m;
+        queue<Node *> q;
+        Node *t, *temp;
+        q.push(root);
+
+        while (!q.empty())
+        {
+            temp = q.front();
+            if (temp->data == target)
+                t = temp;
+            q.pop();
+            if (temp->right)
+            {
+                q.push(temp->right);
+                m[temp->right] = temp;
+            }
+            if (temp->left)
+            {
+                q.push(temp->left);
+                m[temp->left] = temp;
+            }
+        }
+
+        q.push(t);
+        int time = 0;
+        unordered_map<Node *, bool> isVisited;
+        bool flag = false;
+        int size;
+        while (!q.empty())
+        {
+            size = q.size();
+            for (int i = 0; i < size; i++)
+            {
+                temp = q.front();
+                q.pop();
+                if (temp->left && isVisited[temp->left] != true)
+                {
+                    q.push(temp->left);
+                    flag = true;
+                    isVisited[temp->left] = true;
+                }
+                if (temp->right && isVisited[temp->right] != true)
+                {
+                    q.push(temp->right);
+                    flag = true;
+                    isVisited[temp->right] = true;
+                }
+                if (m[temp] && isVisited[m[temp]] != true)
+                {
+                    q.push(m[temp]);
+                    flag = true;
+                    isVisited[m[temp]] = true;
+                }
+            }
+
+            if (flag == true)
+            {
+                time++;
+                flag = false;
+            }
+        }
+        return time;
+    }
+};
+class Solution
+{
+
+    pair<int, int> help(Node *node, int target,int & ans)
+    {
+        if (node = nullptr)
+        {
+            return make_pair(-1, -1);
+        }
+
+        pair<int, int> l = help(node->left, target,ans);
+        pair<int, int> r = help(node->right, target,ans);
+        
+        if(l.second!=-1){
+            ans=max(ans,l.second+1+r.first);
+        }
+        if(r.second!=-1){
+            ans=max(ans,r.second+1+l.first);
+        }
+        pair<int, int> curr = make_pair(max(l.first, r.first) + 1, max(r.second, l.second));
+        if (curr.second > -1)
+            curr.second++;
+        if (node->data == target)
+        {
+            curr.second = 0;
+        }
+        return curr;
+    }
+
+public:
+    int minTime(Node *root, int target)
+    {
+        // Your code goes here
+        int ans=0;
+        help(root,target,ans);
+        return ans;
+    }
 };
 
 class Solution
@@ -346,18 +535,18 @@ class Solution
 {
     unordered_map<int, int> m;
 
-    TreeNode* helper(vector<int> &postorder, vector<int> &inorder, int s, int e, int &k){
-        if(k<0||s>e)return nullptr;
-        
-        int n=m[postorder[k--]];
-        
-        TreeNode* temp=new TreeNode(inorder[n]);
-        temp->right=helper(postorder,inorder,n+1,e,k);
-        temp->left=helper(postorder,inorder,s,n-1,k);
+    TreeNode *helper(vector<int> &postorder, vector<int> &inorder, int s, int e, int &k)
+    {
+        if (k < 0 || s > e)
+            return nullptr;
+
+        int n = m[postorder[k--]];
+
+        TreeNode *temp = new TreeNode(inorder[n]);
+        temp->right = helper(postorder, inorder, n + 1, e, k);
+        temp->left = helper(postorder, inorder, s, n - 1, k);
 
         return temp;
-
-
     }
 
 public:
@@ -366,9 +555,9 @@ public:
         int n = inorder.size();
         for (int i = 0; i < n; i++)
             m[inorder[i]] = i;
-        
-        int k = n-1;
-        return helper(postorder, inorder, 0, n-1, k);
+
+        int k = n - 1;
+        return helper(postorder, inorder, 0, n - 1, k);
     }
 };
 class Solution
@@ -885,3 +1074,5 @@ int main()
 {
     return 0;
 }
+
+*/

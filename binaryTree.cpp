@@ -2,12 +2,11 @@
 
 using namespace std;
 
-
 struct Node
 {
     int data;
-    Node* left, * right;
-}; 
+    Node *left, *right;
+};
 struct ListNode
 {
     int val;
@@ -16,6 +15,27 @@ struct ListNode
     ListNode(int x) : val(x), next(nullptr) {}
     ListNode(int x, ListNode *next) : val(x), next(next) {}
 };
+
+class Trie {
+    TreeNode* root;
+public:
+    Trie() {
+       
+    }
+    
+    void insert(string word) {
+        
+    }
+    
+    bool search(string word) {
+        
+    }
+    
+    bool startsWith(string prefix) {
+        
+    }
+};
+
 class Node
 {
 
@@ -28,6 +48,124 @@ public:
         this->val = val;
         this->left = nullptr;
         this->right = nullptr;
+    }
+};
+struct TreeNode
+{
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+class Solution
+{
+public:
+    void flatten(TreeNode *root)
+    {
+        TreeNode *currNode;
+        TreeNode *predecessor;
+
+        while (currNode != NULL)
+            if (currNode->left)
+            {
+                predecessor = currNode->left;
+                while (predecessor->right && predecessor->right != currNode)
+                    predecessor = predecessor->right;
+
+                if (predecessor->right)
+                {
+                    predecessor->right = currNode->right;
+                    currNode->right = currNode->left;
+                    currNode->left = NULL;
+                }
+                else
+                {
+                    predecessor->right = currNode;
+                    currNode = currNode->left;
+                }
+            }
+            else
+            {
+                currNode = currNode->right;
+            }
+    }
+};
+
+class Solution
+{
+public:
+    void flatten(TreeNode *root)
+    {
+        TreeNode *currNode;
+        TreeNode *predecessor;
+
+        while (currNode != NULL)
+            if (currNode->left)
+            {
+                predecessor = currNode->left;
+                while (predecessor->right && predecessor->right != currNode)
+                    predecessor = predecessor->right;
+
+                predecessor->right = currNode->right;
+                currNode->right = currNode->left;
+                currNode->left = NULL;
+                currNode = currNode->right;
+            }
+            else
+            {
+                currNode = currNode->right;
+            }
+    }
+};
+class Solution
+{
+public:
+    vector<int> inorderTraversal(TreeNode *root)
+    {
+       
+    }
+};
+class Solution
+{
+
+public:
+    int kthSmallest(TreeNode *root, int k)
+    {
+        TreeNode *curr = root;
+        TreeNode *prec;
+
+        while (curr != NULL)
+            if (curr->left)
+            {
+                prec = curr->left;
+                while (prec->right && prec->right != curr)
+                    prec = prec->right;
+                if (prec->right == NULL)
+                {
+                    prec->right = curr;
+                    curr = curr->left;
+                }
+                else
+                {
+                    k--;
+                    if (k == 0)
+                        return curr->val;
+                    prec->right = NULL;
+                    curr = curr->right;
+                }
+            }
+            else
+            {
+                k--;
+                if (k == 0)
+                    return curr->val;
+                curr = curr->right;
+            }
+
+        return -1;
     }
 };
 
@@ -185,59 +323,65 @@ public:
         s.push(root);
         while (!s.empty())
         {
-           
+
             curr = s.top();
             s.pop();
             cout << curr->val << " ";
-           if(curr->right) s.push(curr->right);
-           if(curr->left)  s.push(curr->left);
+            if (curr->right)
+                s.push(curr->right);
+            if (curr->left)
+                s.push(curr->left);
         }
     }
     void postOrderIterative(Node *node)
     {
-        stack<Node *> s1,s2;
+        stack<Node *> s1, s2;
         Node *curr = root;
         s1.push(curr);
-        
+
         while (!s1.empty())
         {
-          curr=s1.top();
-          s1.pop();
-          s2.push(curr);
+            curr = s1.top();
+            s1.pop();
+            s2.push(curr);
 
-          if(curr->left)s1.push(curr->left);
-          if(curr->right)s1.push(curr->right);
+            if (curr->left)
+                s1.push(curr->left);
+            if (curr->right)
+                s1.push(curr->right);
         }
-        while(!s2.empty()){
-           cout<<s2.top()->val<<" ";
-           s2.pop();
+        while (!s2.empty())
+        {
+            cout << s2.top()->val << " ";
+            s2.pop();
         }
     }
 
-    void buildTreeFromLevelOrder(Node *root){
-         queue<Node*> q;
-         int x;
-         cin>>x;
-         root=new Node(x);
-         q.push(root);
+    void buildTreeFromLevelOrder(Node *root)
+    {
+        queue<Node *> q;
+        int x;
+        cin >> x;
+        root = new Node(x);
+        q.push(root);
 
-         while(!q.empty()){
-            Node* temp=q.front();
+        while (!q.empty())
+        {
+            Node *temp = q.front();
             q.pop();
-            cin>>x;
-            temp->left=new Node(x);
+            cin >> x;
+            temp->left = new Node(x);
             q.push(temp->left);
-            cin>>x;
-            temp->right=new Node(x);
-         }
+            cin >> x;
+            temp->right = new Node(x);
+        }
     }
 };
 
 int main()
 {
     BinaryTree bt;
-    
-      
+
     // 5 4 2 -1 -1 6 9 -1 -1 8 -1 -1 3 7 -1 -1 -1
     bt.root = bt.insertData();
 
