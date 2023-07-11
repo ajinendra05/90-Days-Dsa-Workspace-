@@ -4,11 +4,361 @@ using namespace std;
 #define MOD 1000000007
 #define mod 1e9 + 7
 
-
-class Solution {
+class Solution
+{
 public:
-    vector<vector<int>> threeSum(vector<int>& nums) {
-        
+    long long noOfPairs(vector<string> &box)
+    {
+        // Write your code here.
+        int n = box.size();
+        map<vector<long long>, int> m;
+        long long ans=0;
+        for (auto x : box)
+        {
+            vector<int> count(26);
+            vector<long long> odds;
+            for (int i = 0; i < x.size(); i++)
+            {
+                count[x[i] - 'a']++;
+            }
+            for (int i = 0; i < 26; i++)
+            {
+                if (count[i] % 2 == 1)
+                    odds.push_back(i);
+            }
+            if(m[odds]>0){
+                ans+=m[odds];
+                
+            }
+            m[odds]++;
+            
+        }
+        return ans;
+    }
+};
+
+
+
+int main(){
+    vector<string> s={};
+
+}
+class Solution
+{
+
+    void help(vector<int> &price, vector<int> &magical_price, int index, int &ans, int count, int amount, int m)
+    {
+        if (index == price.size())
+        {
+            if (amount <= m)
+                ans = min(ans, count);
+            return;
+        }
+        if (amount > m)
+        {
+            return;
+        }
+        help(price, magical_price, index + 1, ans, count, amount + price[index], m);
+        help(price, magical_price, index + 1, ans, count + 1, amount + magical_price[index], m);
+    }
+
+public:
+    int minimumMagic(int n, int m, vector<int> &price, vector<int> &magical_price)
+    {
+        int ans = INT_MAX;
+        int sum = accumulate(magical_price.begin(), magical_price.end(), 0);
+        if (sum > m)
+            return -1;
+        help(price, magical_price, 0, ans, 0, 0, m);
+        return ans == INT_MAX ? -1 : ans;
+    }
+};
+
+class Solution
+{
+    int largestRectangleArea(vector<int> &heights)
+    {
+        int n = heights.size();
+        vector<int> prevMin(n);
+        vector<int> afterMin(n);
+        stack<pair<int, int>> s;
+        s.push(make_pair(-1, -1));
+        for (int i = 0; i < n; i++)
+        {
+            if (s.top().first < heights[i])
+            {
+                prevMin[i] = s.top().second;
+                s.push(make_pair(heights[i], i));
+            }
+            else
+            {
+                while (s.top().first >= heights[i])
+                {
+                    s.pop();
+                }
+                prevMin[i] = s.top().second;
+                s.push(make_pair(heights[i], i));
+            }
+        }
+        stack<pair<int, int>> s1;
+        s1.push(make_pair(-1, n));
+        for (int i = n - 1; i >= 0; i--)
+        {
+            if (s1.top().first < heights[i])
+            {
+                afterMin[i] = s1.top().second;
+                s1.push(make_pair(heights[i], i));
+            }
+            else
+            {
+                while (s1.top().first >= heights[i])
+                {
+                    s1.pop();
+                }
+                afterMin[i] = s1.top().second;
+                s1.push(make_pair(heights[i], i));
+            }
+        }
+        int maxArea = INT_MIN;
+        for (int i = 0; i < n; i++)
+        {
+            if ((heights[i] * (afterMin[i] - prevMin[i] - 1)) > maxArea)
+                maxArea = heights[i] * (afterMin[i] - prevMin[i] - 1);
+        }
+        return maxArea;
+    }
+
+public:
+    int maximalRectangle(vector<vector<char>> &matrix)
+    {
+        int n = matrix.size();
+        int m = matrix[0].size();
+        vector<vector<int>> matrix2(n, vector<int>(m));
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                if (i == 0)
+                {
+                    if (matrix[i][j] == '0')
+                        matrix2[i][j] = 0;
+                    else if (matrix[i][j] == '1')
+                        matrix2[i][j] = 1;
+                }
+                else
+                {
+                    if (matrix[i][j] == '0')
+                    {
+                        matrix2[i][j] = 0;
+                    }
+                    else
+                    {
+                        matrix2[i][j] = 1 + matrix2[i - 1][j];
+                    }
+                }
+            }
+        }
+        int curArea = 0;
+        int maxArea = 0;
+        for (int i = 0; i < n; i++)
+        {
+            curArea = largestRectangleArea(matrix2[i]);
+            maxArea = maxArea > curArea ? maxArea : curArea;
+        }
+        return maxArea;
+    }
+};
+class Solution
+{
+
+    bool largestRectangleArea(vector<int> &heights, int k)
+    {
+        int n = heights.size();
+        vector<int> prevMin(n);
+        vector<int> afterMin(n);
+        stack<pair<int, int>> s;
+        s.push(make_pair(-1, -1));
+        for (int i = 0; i < n; i++)
+        {
+            if (s.top().first < heights[i])
+            {
+                prevMin[i] = s.top().second;
+                s.push(make_pair(heights[i], i));
+            }
+            else
+            {
+                while (s.top().first >= heights[i])
+                {
+                    s.pop();
+                }
+                prevMin[i] = s.top().second;
+                s.push(make_pair(heights[i], i));
+            }
+        }
+        stack<pair<int, int>> s1;
+        s1.push(make_pair(-1, n));
+        for (int i = n - 1; i >= 0; i--)
+        {
+            if (s1.top().first < heights[i])
+            {
+                afterMin[i] = s1.top().second;
+                s1.push(make_pair(heights[i], i));
+            }
+            else
+            {
+                while (s1.top().first >= heights[i])
+                {
+                    s1.pop();
+                }
+                afterMin[i] = s1.top().second;
+                s1.push(make_pair(heights[i], i));
+            }
+        }
+
+        int m;
+        for (int i = 0; i < n; i++)
+        {
+            m = min(heights[i], (afterMin[i] - prevMin[i] - 1));
+            if (m >= k)
+                return true;
+        }
+        return false;
+    }
+
+public:
+    int maxGoodLength(vector<vector<int>> &a)
+    {
+        // Write your code here.
+        int n = a.size();
+        int m = a[0].size();
+
+        int minMN = min(m, n);
+        for (int k = minMN; k >= 0; k--)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    if (a[i][j] >= k)
+                    {
+                        a[i][j] = 1;
+                    }
+                    else
+                    {
+                        a[i][j] = 0;
+                    }
+                }
+            }
+            vector<vector<int>> a2(n, vector<int>(m));
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    if (i == 0)
+                    {
+                        if (a[i][j] == 0)
+                            a2[i][j] = 0;
+                        else if (a[i][j] == 1)
+                            a2[i][j] = 1;
+                    }
+                    else
+                    {
+                        if (a[i][j] == 0)
+                        {
+                            a2[i][j] = 0;
+                        }
+                        else
+                        {
+                            a2[i][j] = 1 + a2[i - 1][j];
+                        }
+                    }
+                }
+            }
+            bool getIt = false;
+
+            for (int i = 0; i < n; i++)
+            {
+                getIt = largestRectangleArea(a2[i], k);
+                if (getIt == true)
+                    return k;
+            }
+        }
+
+        return 0;
+    }
+};
+class Solution
+{
+public:
+    int minimumMagic(int n, int m, vector<int> &price, vector<int> &magical_price)
+    {
+        if (accumulate(magical_price.begin(), magical_price.end(), 0) > m)
+            return -1;
+        vector<int> diff(n);
+        long long sum = 0;
+        for (int i = 0; i < n; i++)
+        {
+            diff[i] = price[i] - magical_price[i];
+            sum += price[i];
+        }
+        if (sum <= m)
+            return 0;
+        int req = sum - m;
+        sort(diff.begin(), diff.end());
+        int count = -1;
+        for (int i = n - 1; i >= 0; i--)
+        {
+            if (req - diff[i] <= 0)
+            {
+                count = n - i;
+                break;
+            }
+            else
+            {
+                req -= diff[i];
+            }
+        }
+        return count;
+    }
+};
+class Solution
+{
+public:
+    vector<vector<int>> threeSum(vector<int> &nums)
+    {
+        map<int, int> m;
+
+        for (int x : nums)
+        {
+            m[x]++;
+        }
+        int x, y, z;
+        vector<vector<int>> ans;
+        vector<int> pairs;
+        map<vector<int>, bool> isVisited;
+        for (int i = 0; i < nums.size(); i++)
+        {
+            for (int j = 0; j < nums.size(); j++)
+            {
+                x = nums[i];
+                y = nums[j];
+                if (x != y && abs(x) != 2 * abs(y) && abs(y) != 2 * abs(x))
+                {
+                    z = -(x + y);
+                    if (m[z] > 0)
+                    {
+                        pairs = {x, y, z};
+                        sort(pairs.begin(), pairs.end());
+                        if (isVisited[pairs] == false)
+                        {
+                            ans.push_back(pairs);
+                            isVisited[pairs] = true;
+                        }
+                    }
+                }
+            }
+        }
+        return ans;
     }
 };
 
@@ -55,7 +405,6 @@ public:
                             SecondL = 0;
                             othersL = 0;
                         }
-                        
                     }
                     else
                     {

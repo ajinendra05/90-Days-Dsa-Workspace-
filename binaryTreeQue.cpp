@@ -202,6 +202,89 @@ void help(queue<Node *> q, vector<int> &ans)
     }
     help(q, ans);
 }
+int help(Node *node, int &k, int x)
+{
+    if (node == NULL)
+        return -1;
+    if (node->data == x)
+        return x;
+
+    int l = help(node->left, k, x);
+    int r = help(node->right, k, x);
+
+    if (l != -1 && r == -1)
+    {
+        --k;
+        if (k == 0)
+            return node->data;
+        return l;
+    }
+    if (r != -1 && l == -1)
+    {
+        k--;
+        if (k == 0)
+            return node->data;
+        return r;
+    }
+    return -1;
+}
+int kthAncestor(Node *node, int k, int x)
+{
+    // Code here
+    int a = k;
+    int ans = help(node, a, x);
+    if (a > 0)
+        return -1;
+    return ans;
+}
+
+class Solution
+{
+
+    pair<int, int> helper(Node *node)
+    {
+        if (node == nullptr)
+            return make_pair(0, 0);
+
+        pair<int, int> l = helper(node->left);
+        pair<int, int> r = helper(node->right);
+
+        pair<int, int> curr = make_pair(l.second + r.second + node->data, l.first + r.first);
+        return curr;
+    }
+
+public:
+    // Function to return the maximum sum of non-adjacent nodes.
+    int getMaxSum(Node *root)
+    {
+        // Add your code here
+        pair<int, int> ans = helper(root);
+
+        return max(ans.first, ans.second);
+    }
+};
+
+class Solution
+{
+    pair<int, int> help(int arr[], int n, int i)
+    {
+        if (i >= n)
+            return make_pair(0, 0);
+        pair<int, int> ret = help(arr, n, i + 1);
+        pair<int, int> curr = make_pair(ret.second + arr[i], max(ret.first, ret.second));
+        return curr;
+    }
+
+public:
+    // Function to find the maximum money the thief can get.
+    int FindMaxSum(int arr[], int n)
+    {
+        // Your code here
+        pair<int, int> ans = help(arr, n, 0);
+        return max(ans.first, ans.second);
+    }
+};
+
 vector<int> leftView(Node *root)
 {
     // Your code here
@@ -221,6 +304,282 @@ struct TreeNode
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
 
+class Solution
+{
+    TreeNode *helper(vector<int> &preorder, vector<int> &inorder, int s, int e, int &k)
+    {
+
+        if (s > e || k >= preorder.size())
+        {
+            return nullptr;
+        }
+        int n;
+
+        // find index in inorder
+        for (int i = s; i <= e; i++)
+        {
+            if (inorder[i] == preorder[k])
+            {
+                n = i;
+                k++;
+                break;
+            }
+        }
+
+        TreeNode *temp = new TreeNode(inorder[n]);
+        // divide inorder array and call for left and right subtree
+
+        temp->left = helper(preorder, inorder, s, n - 1, k);
+        temp->right = helper(preorder, inorder, n + 1, e, k);
+        return temp;
+    }
+
+public:
+    TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder)
+    {
+        int k = 0;
+        return helper(preorder, inorder, 0, inorder.size() - 1, k);
+    }
+};
+
+class Solution
+{
+    unordered_map<int, int> m;
+
+    TreeNode* helper(vector<int> &postorder, vector<int> &inorder, int s, int e, int &k){
+        if(k<0||s>e)return nullptr;
+        
+        int n=m[postorder[k--]];
+        
+        TreeNode* temp=new TreeNode(inorder[n]);
+        temp->right=helper(postorder,inorder,n+1,e,k);
+        temp->left=helper(postorder,inorder,s,n-1,k);
+
+        return temp;
+
+
+    }
+
+public:
+    TreeNode *buildTree(vector<int> &inorder, vector<int> &postorder)
+    {
+        int n = inorder.size();
+        for (int i = 0; i < n; i++)
+            m[inorder[i]] = i;
+        
+        int k = n-1;
+        return helper(postorder, inorder, 0, n-1, k);
+    }
+};
+class Solution
+{
+    unordered_map<int, int> m;
+    TreeNode *helper(vector<int> &preorder, vector<int> &inorder, int s, int e, int &k)
+    {
+
+        if (s > e || k >= preorder.size())
+        {
+            return nullptr;
+        }
+        int n;
+        n = m[preorder[k]];
+        k++;
+
+        TreeNode *temp = new TreeNode(inorder[n]);
+        temp->left = helper(preorder, inorder, s, n - 1, k);
+        temp->right = helper(preorder, inorder, n + 1, e, k);
+        return temp;
+    }
+
+public:
+    TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder)
+    {
+        int n = inorder.size();
+        for (int i = 0; i < n; i++)
+        {
+            m[inorder[i]] = i;
+        }
+        int k = 0;
+        return helper(preorder, inorder, 0, inorder.size() - 1, k);
+    }
+};
+class Solution
+{
+    TreeNode *helper(vector<int> &preorder, vector<int> &inorder, int s, int e, int &k)
+    {
+
+        if (s > e)
+        {
+            return nullptr;
+        }
+        int n;
+        for (int i = s; i <= e; i++)
+        {
+            if (inorder[i] == preorder[k])
+            {
+                n = i;
+                k++;
+                break;
+            }
+        }
+
+        TreeNode *temp = new TreeNode(preorder[k]);
+        temp->left = helper(preorder, inorder, s, n - 1, k);
+        temp->right = helper(preorder, inorder, n + 1, e, k);
+        return temp;
+    }
+
+public:
+    TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder)
+    {
+        int k = 0;
+        return helper(preorder, inorder, 0, inorder.size() - 1, k);
+    }
+};
+class TreeAncestor
+{
+    vector<vector<int>> results;
+
+public:
+    TreeAncestor(int n, vector<int> &parent)
+    {
+        vector<vector<int>> v(n, vector<int>(16));
+        for (int i = 0; i < n; i++)
+            v[i][0] = parent[i];
+
+        for (int i = 1; i < 16; i++)
+            for (int j = 0; j < n; j++)
+                if (v[j][i - 1] == -1)
+                    v[j][i] = -1;
+                else
+                    v[j][i] = v[v[j][i - 1]][i - 1];
+
+        results = v;
+    }
+
+    int getKthAncestor(int node, int k)
+    {
+        for (int i = 0; i < 16; i++)
+        {
+            if ((k >> i) & 1)
+            {
+                node = results[node][i];
+                if (node == -1)
+                    return -1;
+            }
+        }
+        return node;
+    }
+};
+
+class TreeAncestor
+{
+    vector<vector<int>> results;
+
+public:
+    TreeAncestor(int n, vector<int> &parent)
+    {
+        vector<vector<int>> v(n, vector<int>(16));
+        for (int i = 0; i < n; i++)
+        {
+            v[i][0] = parent[i];
+        }
+        for (int i = 1; i < 16; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                if (v[j][i - 1] == -1)
+                {
+                    v[j][i] = -1;
+                }
+                else
+                {
+                    v[j][i] = v[v[j][i - 1]][i - 1];
+                }
+            }
+        }
+        results = v;
+    }
+
+    int getKthAncestor(int node, int k)
+    {
+        for (int i = 0; i < 16; i++)
+        {
+            if ((k >> i) & 1)
+            {
+                node = results[node][i];
+                if (node == -1)
+                    return -1;
+            }
+        }
+        return node;
+    }
+};
+
+class TreeAncestor
+{
+    vector<int> parent;
+    int n;
+
+public:
+    TreeAncestor(int n, vector<int> &parent)
+    {
+        this->parent = parent;
+        this->n = n;
+    }
+    int help(int node, int &k)
+    {
+        if (node == -1 || node < 0 || node > n)
+            return -1;
+        if (k == 0)
+            return node;
+        int x;
+        if (k > 0)
+        {
+            k--;
+            x = help(parent[node], k);
+        }
+        return x;
+    }
+    int getKthAncestor(int node, int k)
+    {
+        int a = k;
+        int ans = help(node, a);
+        return ans;
+    }
+};
+class TreeAncestor
+{
+    vector<int> parent;
+    int n;
+
+public:
+    TreeAncestor(int n, vector<int> &parent)
+    {
+        this->parent = parent;
+        this->n = n;
+    }
+    int help(int node, int &k)
+    {
+        if (node == -1 || node < 0 || node > n)
+            return -1;
+        if (k == 0)
+            return node;
+        int x;
+        if (k > 0)
+        {
+            k--;
+            x = help(parent[node], k);
+        }
+        return x;
+    }
+    int getKthAncestor(int node, int k)
+    {
+        int a = k;
+        int ans = help(node, a);
+        return ans;
+    }
+};
 class Solution
 {
     void traversal(TreeNode *node, int k, int &count, vector<int> path)

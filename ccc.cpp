@@ -1,36 +1,42 @@
 
 #include <stdio.h>
 # include <iostream>
+
 using namespace std;
 
-int main() {
-long a, b;
-int i = 0, r = 0, sum[20];
-cout << "Enter the first binary number: ";
 
-cin >> a;
 
-cout << "Enter the second binary number: ";
 
-cin >> b;
 
-while (a != 0 || b != 0)
-{
-sum[i++] = (a % 10 + b % 10 + r) % 2;
-r = (a % 10 + b % 10 + r) / 2;
-a = a / 10;
-b = b / 10;
-}
-if (r != 0)
-sum[i++] = r;
---i;
-cout << "The sum of the two binary numbers is: ";
-while (i >= 0)
-cout << sum[i--];
-cout << ". ";
 
-return 0;
-}
+// int main() {
+// long a, b;
+// int i = 0, r = 0, sum[20];
+// cout << "Enter the first binary number: ";
+
+// cin >> a;
+
+// cout << "Enter the second binary number: ";
+
+// cin >> b;
+
+// while (a != 0 || b != 0)
+// {
+// sum[i++] = (a % 10 + b % 10 + r) % 2;
+// r = (a % 10 + b % 10 + r) / 2;
+// a = a / 10;
+// b = b / 10;
+// }
+// if (r != 0)
+// sum[i++] = r;
+// --i;
+// cout << "The sum of the two binary numbers is: ";
+// while (i >= 0)
+// cout << sum[i--];
+// cout << ". ";
+
+// return 0;
+// }
 
 // I need to use similar methods to allow for binary subtraction and multiplication. I tried the following code, but it did not work as planned. Adding an if statement (like in if c=1) causes the loop to continue several times, never giving the correct answer. Using the subtract formula individually, gives me the same result as addition. Could someone please help me fix this? Thanks
 
