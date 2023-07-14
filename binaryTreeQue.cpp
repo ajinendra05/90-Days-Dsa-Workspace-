@@ -2,86 +2,82 @@
 
 using namespace std;
 
+// class Node {
+// public:
+//     bool val;
+//     bool isLeaf;
+//     Node* topLeft;
+//     Node* topRight;
+//     Node* bottomLeft;
+//     Node* bottomRight;
 
+//     Node() {
+//         val = false;
+//         isLeaf = false;
+//         topLeft = NULL;
+//         topRight = NULL;
+//         bottomLeft = NULL;
+//         bottomRight = NULL;
+//     }
 
-class Node {
-public:
-    bool val;
-    bool isLeaf;
-    Node* topLeft;
-    Node* topRight;
-    Node* bottomLeft;
-    Node* bottomRight;
-    
-    Node() {
-        val = false;
-        isLeaf = false;
-        topLeft = NULL;
-        topRight = NULL;
-        bottomLeft = NULL;
-        bottomRight = NULL;
-    }
-    
-    Node(bool _val, bool _isLeaf) {
-        val = _val;
-        isLeaf = _isLeaf;
-        topLeft = NULL;
-        topRight = NULL;
-        bottomLeft = NULL;
-        bottomRight = NULL;
-    }
-    
-    Node(bool _val, bool _isLeaf, Node* _topLeft, Node* _topRight, Node* _bottomLeft, Node* _bottomRight) {
-        val = _val;
-        isLeaf = _isLeaf;
-        topLeft = _topLeft;
-        topRight = _topRight;
-        bottomLeft = _bottomLeft;
-        bottomRight = _bottomRight;
-    }  
-};
+//     Node(bool _val, bool _isLeaf) {
+//         val = _val;
+//         isLeaf = _isLeaf;
+//         topLeft = NULL;
+//         topRight = NULL;
+//         bottomLeft = NULL;
+//         bottomRight = NULL;
+//     }
 
+//     Node(bool _val, bool _isLeaf, Node* _topLeft, Node* _topRight, Node* _bottomLeft, Node* _bottomRight) {
+//         val = _val;
+//         isLeaf = _isLeaf;
+//         topLeft = _topLeft;
+//         topRight = _topRight;
+//         bottomLeft = _bottomLeft;
+//         bottomRight = _bottomRight;
+//     }
+// };
 
-class Solution {
-    Node* helper(vector<vector<int>>& grid,int top,int rit,int btm,int lft){
-        cout<<"in";
-        if(top>btm||rit>lft)return NULL;
-        int n=grid.size();
-        if(top<0||top>=n||rit<0||rit>=n||btm<0||btm>=n||lft<0||lft>=n)return NULL;
-        
-        int sum;
-        cout<<"in";
-        for(int i=top;i<=btm;i++){
-            sum+=accumulate(grid[i].begin()+rit,grid[i].end()+lft,0);
-        }
-        
-        cout<<"in";
-        if(sum==0){
-            Node* node=new Node(0,1);
-            return node;
-        }
-        if(sum==(((btm-top)+1)*((lft-rit)+1))){
-            Node* node=new Node(1,1);
-            return node;
-        }
-        cout<<"in";
-        Node* node=new Node(1,0);
-        int verticalMid=(top+btm)/2;
-        int horizontalMid=(lft+rit)/2;   
-        node->topLeft=helper(grid,top,rit,verticalMid,horizontalMid);
-        node->topRight=helper(grid,top,horizontalMid+1,verticalMid,lft);
-        node->bottomLeft=helper(grid,verticalMid+1,rit,btm,horizontalMid);
-        node->bottomRight=helper(grid,verticalMid+1,horizontalMid+1,btm,lft);
-        cout<<"out";
-        return node; 
-    }
-public: 
-    Node* construct(vector<vector<int>>& grid) {
-        return helper(grid,0,0,grid.size()-1,grid.size()-1);
-    }
-};
+// class Solution {
+//     Node* helper(vector<vector<int>>& grid,int top,int rit,int btm,int lft){
+//         cout<<"in";
+//         if(top>btm||rit>lft)return NULL;
+//         int n=grid.size();
+//         if(top<0||top>=n||rit<0||rit>=n||btm<0||btm>=n||lft<0||lft>=n)return NULL;
 
-/*
+//         int sum;
+//         cout<<"in";
+//         for(int i=top;i<=btm;i++){
+//             sum+=accumulate(grid[i].begin()+rit,grid[i].end()+lft,0);
+//         }
+
+//         cout<<"in";
+//         if(sum==0){
+//             Node* node=new Node(0,1);
+//             return node;
+//         }
+//         if(sum==(((btm-top)+1)*((lft-rit)+1))){
+//             Node* node=new Node(1,1);
+//             return node;
+//         }
+//         cout<<"in";
+//         Node* node=new Node(1,0);
+//         int verticalMid=(top+btm)/2;
+//         int horizontalMid=(lft+rit)/2;
+//         node->topLeft=helper(grid,top,rit,verticalMid,horizontalMid);
+//         node->topRight=helper(grid,top,horizontalMid+1,verticalMid,lft);
+//         node->bottomLeft=helper(grid,verticalMid+1,rit,btm,horizontalMid);
+//         node->bottomRight=helper(grid,verticalMid+1,horizontalMid+1,btm,lft);
+//         cout<<"out";
+//         return node;
+//     }
+// public:
+//     Node* construct(vector<vector<int>>& grid) {
+//         return helper(grid,0,0,grid.size()-1,grid.size()-1);
+//     }
+// };
+
 struct Node
 {
     int data;
@@ -161,21 +157,23 @@ public:
 class Solution
 {
 
-    pair<int, int> help(Node *node, int target,int & ans)
+    pair<int, int> help(Node *node, int target, int &ans)
     {
         if (node = nullptr)
         {
             return make_pair(-1, -1);
         }
 
-        pair<int, int> l = help(node->left, target,ans);
-        pair<int, int> r = help(node->right, target,ans);
-        
-        if(l.second!=-1){
-            ans=max(ans,l.second+1+r.first);
+        pair<int, int> l = help(node->left, target, ans);
+        pair<int, int> r = help(node->right, target, ans);
+
+        if (l.second != -1)
+        {
+            ans = max(ans, l.second + 1 + r.first);
         }
-        if(r.second!=-1){
-            ans=max(ans,r.second+1+l.first);
+        if (r.second != -1)
+        {
+            ans = max(ans, r.second + 1 + l.first);
         }
         pair<int, int> curr = make_pair(max(l.first, r.first) + 1, max(r.second, l.second));
         if (curr.second > -1)
@@ -191,8 +189,8 @@ public:
     int minTime(Node *root, int target)
     {
         // Your code goes here
-        int ans=0;
-        help(root,target,ans);
+        int ans = 0;
+        help(root, target, ans);
         return ans;
     }
 };
@@ -491,6 +489,65 @@ struct TreeNode
     TreeNode() : val(0), left(nullptr), right(nullptr) {}
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+class Solution
+{
+    int helper(TreeNode *node, int front, vector<int> &ans, int target, int k)
+    {
+        if (node == NULL)
+            return 0;
+
+        if (front == k)
+        {
+            ans.push_back(node->val);
+            return 0;
+        }
+        if (node->val == target)
+        {
+            helper(node->left, front + 1, ans, target, k);
+            helper(node->right, front + 1, ans, target, k);
+            return 1;
+        }
+        if (front >= 1)
+        {
+            helper(node->left, front + 1, ans, target, k);
+            helper(node->right, front + 1, ans, target, k);
+            return 0;
+        }
+        int l = helper(node->left, front, ans, target, k);
+        if (l > 0 && l < k)
+        {
+            if (l == k)
+            {
+                ans.push_back(node->val);
+                return 0;
+            }
+            helper(node->right, l + 1, ans, target, k);
+            return l + 1;
+        }
+        int r = helper(node->right, front, ans, target, k);
+        if (r > 0 && r < k)
+        {
+            if (r == k)
+            {
+                ans.push_back(node->val);
+                return 0;
+            }
+            helper(node->left, r + 1, ans, target, k);
+            return r + 1;
+        }
+    }
+
+public:
+    vector<int> distanceK(TreeNode *root, TreeNode *target, int k)
+    {
+        if (k == 0)
+            return {target->val};
+        vector<int> ans;
+        helper(root, 0, ans, target->val, k);
+        return ans;
+    }
 };
 
 class Solution
@@ -1074,5 +1131,3 @@ int main()
 {
     return 0;
 }
-
-*/

@@ -4,6 +4,256 @@ using namespace std;
 #define MOD 1000000007
 #define mod 1e9 + 7
 
+
+class Solution{
+    public:
+    //Function to return the minimum cost of connecting the ropes.
+    long long minCost(long long arr[], long long n) {
+        // Your code here
+        priority_queue<long long,vector<long long>, greater<long long>> pq;
+        
+        for(long long i=0;i<n;i++){
+            pq.push(arr[i]);
+        }
+        
+        long long cost=0,currCost;
+        
+        while(pq.size()>1){
+            currCost=0;
+            currCost+=pq.top();
+            pq.pop();
+            currCost+=pq.top();
+            pq.pop();
+            
+            cost+=currCost;
+            pq.push(currCost);
+            
+        }
+        return cost;
+    }
+};
+
+//without learn GRAPH :)
+
+class Solution {
+    bool checker(vector<vector<int>> &v, map<int,int> &pv, map<int,int> &vis,int ind){
+        if(v[ind].empty())
+            return true;
+        if(pv[ind]==true)
+            return false;
+        if(vis[ind]==true)
+            return true;
+        vis[ind]=true;
+        pv[ind]=true;
+        for(int i=0;i<v[ind].size();i++){
+            if(checker(v,pv,vis,v[ind][i])==false)
+                return false;
+        }
+        pv[ind]=false;
+        return true;
+    }
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& pre) {
+        vector<vector<int>> v(numCourses);
+        map<int,int> pathVisited;
+        map<int,int> visited;
+        
+        for(auto x: pre){
+            v[x[0]].push_back(x[1]);
+        }
+        
+        for(int i=0;i<numCourses;i++){
+            pathVisited.clear();
+            if(checker(v,pathVisited,visited,i)==false)return false;
+        }
+        return true;
+    }
+};
+
+
+
+
+
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        
+        set<vector<int>> s;
+        for(auto x: prerequisites){
+            if(x[0]==x[1])return false;
+            sort(x.begin(),x.end());
+            s.insert(x);
+        }
+        return s.size()==prerequisites.size();
+    }
+};
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        for(auto x: prerequisites){
+            sort(x.begin(),x.end());
+        }
+        set<pair<int,int>> s(prerequisites.begin(),prerequisites.end());
+        
+        return s.size()==prerequisites.size();
+    }
+};
+
+class Solution
+{
+    bool iscontain(vector<int> first, vector<int> sec)
+    {
+        sort(first.begin(), first.end());
+
+        return includes(first.begin(), first.end(), sec.begin(), sec.end());
+    }
+
+public:
+    vector<int> eventualSafeNodes(vector<vector<int>> &graph)
+    {
+        vector<int> safe;
+
+        bool flag = true;
+        unordered_map<int, bool> m;
+        while (flag)
+        {
+            flag = false;
+            for (int i = 0; i < graph.size(); i++)
+            {
+                if (m[i] == true)
+                    continue;
+
+                if (graph[i].empty())
+                {
+                    m[i] = true;
+                    safe.push_back(i);
+                    flag = true;
+                }
+                else if (iscontain(safe, graph[i]))
+                {
+
+                    m[i] = true;
+                    safe.push_back(i);
+                    flag = true;
+                }
+            }
+        }
+        sort(safe.begin(), safe.end());
+        return safe;
+    }
+};
+
+class Solution
+{
+    vector<int> safeNode;
+    unordered_map<int, bool> notsafe;
+    unordered_map<int, bool> safe;
+    unordered_map<int, bool> isvited;
+
+public:
+    bool traverse(vector<vector<int>> &graph, int i)
+    {
+        if (isvited[i] == true || notsafe[i] == true)
+            return false;
+        isvited[i] = true;
+        if (graph[i].empty() || safe[i] == true)
+        {
+
+            return true;
+        }
+        bool c = true;
+        for (int j = 0; j < graph[i].size(); j++)
+        {
+            c = c && traverse(graph, graph[i][j]);
+            isvited[graph[i][j]] = false;
+            if (c == false)
+            {
+                return false;
+            }
+        }
+        return c;
+    }
+    vector<int> eventualSafeNodes(vector<vector<int>> &graph)
+    {
+
+        for (int j = 0; j < graph.size(); j++)
+        {
+            isvited.clear();
+            if (traverse(graph, j))
+            {
+                safeNode.push_back(j);
+                safe[j] = true;
+            }
+            else
+            {
+                notsafe[j] = true;
+            }
+        }
+        return safeNode;
+    }
+};
+
+class Solution
+{
+    bool helper()
+    {
+    }
+
+public:
+    bool isMatch(string s, string p)
+    {
+        if (p[0] != '*' && p[0] != '?')
+            if (p[0] != s[0])
+                return false;
+    }
+};
+
+class Solution
+{
+
+public:
+    int trap(vector<int> &height)
+    {
+        int ans = 0;
+        int maxL, maxR, cross;
+        int n = height.size();
+        for (int i = 1; i < n - 1; i++)
+        {
+            maxL = *max_element(height.begin(), height.begin() + i);
+            maxR = *max_element(height.begin() + i + 1, height.end());
+            cross = min(maxL, maxR) - height[i];
+            ans = cross > 0 ? ans + cross : ans;
+        }
+        return ans;
+    }
+};
+class Solution
+{
+public:
+    int trap(vector<int> &height)
+    {
+        int ans = 0;
+        // int maxL,maxR,cross;
+        int n = height.size();
+        int m = 0, m2 = 0, cross;
+        vector<int> maxL(n), maxR(n);
+        for (int i = 0; i < n; i++)
+        {
+            maxL[i] = m;
+            m = max(m, height[i]);
+            maxR[n - (i + 1)] = m2;
+            m2 = max(m2, height[n - (i + 1)]);
+        }
+        for (int i = 1; i < n - 1; i++)
+        {
+            cross = min(maxL[i], maxR[i]) - height[i];
+            ans = cross > 0 ? ans + cross : ans;
+        }
+
+        return ans;
+    }
+};
+
 struct TreeNode
 {
     int val;
@@ -12,40 +262,42 @@ struct TreeNode
     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 };
 
-
-class Solution {
+class Solution
+{
 public:
-    string addBinary(string a, string b) {
-    reverse(a.begin(),a.end());
-    reverse(b.begin(),b.end());
-    
-    string ans;
-    int carry=0;
-    int x,y,sum=0;
-    while(!a.empty()||!b.empty()){
-        x=0;y=0;
-        if(!a.empty()){
-            x=a[0]-48;
-            a.erase(a.begin());
-        }
-         if(!a.empty()){
-            y=b[0]-48;
-            b.erase(b.begin());
-        }
-        sum=x+y+carry;
-        carry=sum>1?1:0;
-        sum=sum%2==1?49:48;
-        ans.push_back(char(sum));
+    string addBinary(string a, string b)
+    {
+        reverse(a.begin(), a.end());
+        reverse(b.begin(), b.end());
 
-    }    
-    if(carry)ans.push_back(char(49));
-    reverse(ans.begin(),ans.end());
-    return ans; 
+        string ans;
+        int carry = 0;
+        int x, y, sum = 0;
+        while (!a.empty() || !b.empty())
+        {
+            x = 0;
+            y = 0;
+            if (!a.empty())
+            {
+                x = a[0] - 48;
+                a.erase(a.begin());
+            }
+            if (!a.empty())
+            {
+                y = b[0] - 48;
+                b.erase(b.begin());
+            }
+            sum = x + y + carry;
+            carry = sum > 1 ? 1 : 0;
+            sum = sum % 2 == 1 ? 49 : 48;
+            ans.push_back(char(sum));
+        }
+        if (carry)
+            ans.push_back(char(49));
+        reverse(ans.begin(), ans.end());
+        return ans;
     }
 };
-
-
-
 
 class Codec
 {
