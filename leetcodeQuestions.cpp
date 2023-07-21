@@ -4,98 +4,186 @@ using namespace std;
 #define MOD 1000000007
 #define mod 1e9 + 7
 
+class LRUCache
+{
+    set<pair<int, int>> freq;
+    int size;
+    map<int, pair<int, int>> cache;
+    int index;
+    int maxF;
 
-class Solution{
-    public:
-    //Function to return the minimum cost of connecting the ropes.
-    long long minCost(long long arr[], long long n) {
+public:
+    LRUCache(int capacity)
+    {
+        this->size = capacity;
+        this->index = 0;
+        maxF = 0;
+    }
+
+    int get(int key)
+    {
+        maxF++;
+        if (cache.find(key) != cache.end())
+        {
+            freq.erase({cache[key].second, key});
+            freq.insert({maxF, key});
+            
+            return cache[key].first;
+        }
+        return -1;
+    }
+
+    void put(int key, int value)
+    {
+        index++;
+        maxF++;
+        if (index <= size)
+        {
+            cache[key] = {value, maxF};
+            freq.insert({maxF, key});
+        }
+        else
+        {
+            auto least = *(freq.begin());
+            cache.erase(least.second);
+            freq.erase(freq.begin());
+            cache[key] = make_pair(value,maxF);
+    
+            freq.insert({maxF, key});
+        }
+    }
+};
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache* obj = new LRUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+ */
+
+class compare
+{
+public:
+    bool operator()(vector<int> v1, vector<int> v2)
+    {
+        return v1[2] > v2[2];
+    }
+};
+class Solution
+{
+
+public:
+    int maxValue(vector<vector<int>> &events, int k)
+    {
+        sort(events.begin(), events.end(), compare());
+        int ans = INT_MIN;
+    }
+};
+class Solution
+{
+public:
+    // Function to return the minimum cost of connecting the ropes.
+    long long minCost(long long arr[], long long n)
+    {
         // Your code here
-        priority_queue<long long,vector<long long>, greater<long long>> pq;
-        
-        for(long long i=0;i<n;i++){
+        priority_queue<long long, vector<long long>, greater<long long>> pq;
+
+        for (long long i = 0; i < n; i++)
+        {
             pq.push(arr[i]);
         }
-        
-        long long cost=0,currCost;
-        
-        while(pq.size()>1){
-            currCost=0;
-            currCost+=pq.top();
+
+        long long cost = 0, currCost;
+
+        while (pq.size() > 1)
+        {
+            currCost = 0;
+            currCost += pq.top();
             pq.pop();
-            currCost+=pq.top();
+            currCost += pq.top();
             pq.pop();
-            
-            cost+=currCost;
+
+            cost += currCost;
             pq.push(currCost);
-            
         }
         return cost;
     }
 };
 
-//without learn GRAPH :)
+// without learn GRAPH :)
 
-class Solution {
-    bool checker(vector<vector<int>> &v, map<int,int> &pv, map<int,int> &vis,int ind){
-        if(v[ind].empty())
+class Solution
+{
+    bool checker(vector<vector<int>> &v, map<int, int> &pv, map<int, int> &vis, int ind)
+    {
+        if (v[ind].empty())
             return true;
-        if(pv[ind]==true)
+        if (pv[ind] == true)
             return false;
-        if(vis[ind]==true)
+        if (vis[ind] == true)
             return true;
-        vis[ind]=true;
-        pv[ind]=true;
-        for(int i=0;i<v[ind].size();i++){
-            if(checker(v,pv,vis,v[ind][i])==false)
+        vis[ind] = true;
+        pv[ind] = true;
+        for (int i = 0; i < v[ind].size(); i++)
+        {
+            if (checker(v, pv, vis, v[ind][i]) == false)
                 return false;
         }
-        pv[ind]=false;
+        pv[ind] = false;
         return true;
     }
+
 public:
-    bool canFinish(int numCourses, vector<vector<int>>& pre) {
+    bool canFinish(int numCourses, vector<vector<int>> &pre)
+    {
         vector<vector<int>> v(numCourses);
-        map<int,int> pathVisited;
-        map<int,int> visited;
-        
-        for(auto x: pre){
+        map<int, int> pathVisited;
+        map<int, int> visited;
+
+        for (auto x : pre)
+        {
             v[x[0]].push_back(x[1]);
         }
-        
-        for(int i=0;i<numCourses;i++){
+
+        for (int i = 0; i < numCourses; i++)
+        {
             pathVisited.clear();
-            if(checker(v,pathVisited,visited,i)==false)return false;
+            if (checker(v, pathVisited, visited, i) == false)
+                return false;
         }
         return true;
     }
 };
 
-
-
-
-
-class Solution {
+class Solution
+{
 public:
-    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
-        
+    bool canFinish(int numCourses, vector<vector<int>> &prerequisites)
+    {
+
         set<vector<int>> s;
-        for(auto x: prerequisites){
-            if(x[0]==x[1])return false;
-            sort(x.begin(),x.end());
+        for (auto x : prerequisites)
+        {
+            if (x[0] == x[1])
+                return false;
+            sort(x.begin(), x.end());
             s.insert(x);
         }
-        return s.size()==prerequisites.size();
+        return s.size() == prerequisites.size();
     }
 };
-class Solution {
+class Solution
+{
 public:
-    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
-        for(auto x: prerequisites){
-            sort(x.begin(),x.end());
+    bool canFinish(int numCourses, vector<vector<int>> &prerequisites)
+    {
+        for (auto x : prerequisites)
+        {
+            sort(x.begin(), x.end());
         }
-        set<pair<int,int>> s(prerequisites.begin(),prerequisites.end());
-        
-        return s.size()==prerequisites.size();
+        set<pair<int, int>> s(prerequisites.begin(), prerequisites.end());
+
+        return s.size() == prerequisites.size();
     }
 };
 
