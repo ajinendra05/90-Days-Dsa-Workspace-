@@ -432,6 +432,62 @@ int kknightsproblem(vector<vector<bool>> board, int r, int c, int target)
     return count;
 }
 
+
+
+//recursion + backtracking  46. Permutations
+class Solution {
+    void helper(vector<int>& nums,vector<int>& curr, vector<vector<int>>& ans, unordered_map<int, bool>& mp){
+        if(curr.size() == nums.size()){
+            ans.push_back(curr);
+            return;
+        }
+        
+        for(int x: nums){
+            if(mp[x] == false){
+                mp[x] = true;
+                curr.push_back(x);
+                helper(nums, curr, ans, mp);
+                curr.pop_back();
+                mp[x] = false;
+            }
+        }
+    }
+public:
+    vector<vector<int>> permute(vector<int>& nums) {
+        vector<vector<int>> ans;
+        unordered_map<int, bool> mp;
+        vector<int> curr;
+        
+        helper(nums, curr, ans, mp);
+        return ans;
+    }
+};
+
+// 77. Combinations
+class Solution {
+    
+    void help(int curr, int n, int k, vector<int>& comb, vector<vector<int>>& ans){
+        if(comb.size() == k){
+            ans.push_back(comb);
+            return;
+        }
+        
+        for(int i=curr; i<=n; i++){
+            comb.push_back(i);
+            help(i+1, n, k, comb, ans);
+            comb.pop_back();
+        }
+    }
+public:
+    vector<vector<int>> combine(int n, int k) {
+        vector<vector<int>> ans;
+        vector<int> combi;
+        
+        help(1, n, k, combi, ans);
+        return ans;
+        
+    }
+};
 int main()
 {
     // addPath(make_pair(0,0),2,"");
@@ -448,3 +504,4 @@ int main()
     // cout << countPath(make_pair(0, 0), 2);
     return 0;
 }
+

@@ -776,6 +776,48 @@ public:
         }
         return s;
     }
+    
+    // reversion ll
+    // main
+    ListNode* reverseLL(ListNode* curr){
+        if(curr == NULL || curr->next == NULL) return curr;
+        
+        ListNode* newHead = reverseLL(curr->next);
+        
+        curr->next->next = curr;
+        curr->next = NULL;
+        
+        return newHead;
+    }  
+    ListNode* reverseWithoutRec(ListNode* head){
+        ListNode *curr, *next, *prev;
+        curr = head;
+        prev = NULL;
+        
+        while(curr != NULL){
+            next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+    ListNode *reversionLL(ListNode *head)
+    {
+        if (head == NULL || head->next == NULL)
+        {
+            return head;
+        }
+
+        ListNode *newHead = reversionLL(head->next);
+
+        head->next->next = head;
+        head->next = NULL;
+
+        return newHead;
+    }
+    
+    // other also
     void reverseLLrecursion(ListNode *curr, ListNode **head, ListNode *prev)
     {
         if (curr == NULL)
@@ -1618,15 +1660,14 @@ public:
             else
             {
                 d2->next = temp;
-                d2= d2->next;
+                d2 = d2->next;
             }
             temp = temp->next;
         }
-        d1->next=right->next;
-        d2->next=NULL;
+        d1->next = right->next;
+        d2->next = NULL;
 
         return left->next;
-
     }
 };
 

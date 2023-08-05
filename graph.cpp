@@ -255,7 +255,118 @@ public:
 
 
 // Dijkstra's  algo
+class Solution {
+public:
+    int networkDelayTime(vector<vector<int>>& times, int n, int k) {
+        using ip = pair<int, int>;
+        vector<vector<ip>> adj(n + 1);
+        for (auto& t : times) adj[t[0]].push_back({t[1], t[2]});
+        
+        //start
+        priority_queue<ip, vector<ip>, greater<ip>> pq;
+        vector<int> dist(n + 1, INT_MAX);
+        vector<bool> visited(n + 1, false);
 
+        pq.push({0, k});
+        dist[k] = 0;
+
+        while (!pq.empty()) {
+            auto [n_cost, node] = pq.top();
+            pq.pop();
+
+            visited[node] = true;
+            if (dist[node] < n_cost) continue;  // Optimization: skip node if we already find better option.
+            
+            for (auto& [next, cost] : adj[node]) {
+                if (visited[next] == true) continue; // Optimization: do not re-visit nodes.
+                if (dist[next] > dist[node] + cost) {
+                    dist[next] = dist[node] + cost;
+                    pq.push({dist[next], next});
+                }
+            }
+        }
+        int res = 0;
+        for_each(dist.begin() + 1, dist.end(), [&](int d) {
+            res = max(res, d);
+        });
+        return res == INT_MAX ? -1 : res;
+    }
+};
+class Solution {
+public:
+    void Dijkstras(vector<vector<int>>& times, int n, int k) {
+        using ip = pair<int, int>;
+        vector<vector<ip>> adj(n + 1);
+        for (auto& t : times) adj[t[0]].push_back({t[1], t[2]});
+        
+        //start
+        priority_queue<ip, vector<ip>, greater<ip>> pq;
+        vector<int> dist(n + 1, INT_MAX);
+        vector<bool> visited(n + 1, false);
+
+        pq.push({0, k});
+        dist[k] = 0;
+
+        while (!pq.empty()) {
+            auto [n_cost, node] = pq.top();
+            pq.pop();
+
+            visited[node] = true;
+            
+            for (auto& [next, cost] : adj[node]) {
+                if (visited[next] == true) continue; // Optimization: do not re-visit nodes.
+                if (dist[next] > n_cost + cost) {
+                    dist[next] = n_cost + cost;
+                    pq.push({dist[next], next});
+                }
+            }
+        }
+       
+    }
+};
+class Solution
+{
+
+public:
+    vector<int> shortestPath(int N, int M, vector<vector<int>> &edges)
+    {
+        vector<pair<int, int>> adj[N];
+
+        for (auto x : edges)        //O(e)
+            adj[x[0]].push_back({x[1], x[2]});
+        
+
+        vector<int> dist(N,INT_MAX);
+        set<pair<int,int>> st;
+
+        st.insert({0,0});
+        dist[0]=0;
+
+        while(!st.empty()){
+            auto ele= *st.begin();
+
+            int d=ele.first;
+            int i=ele.second;
+
+            st.erase(st.begin());
+
+            for(auto x: adj[i]){
+                int adjN=x.first;
+                int edgW=x.second;
+
+                if(edgW+d < dist[adjN]){
+
+                    if(dist[adjN]!=INT_MAX)
+                        st.erase({dist[adjN],adjN});
+                    
+                    dist[adjN]=edgW+d;
+                    st.insert({dist[adjN],edgW});
+                }
+            }
+        }
+        return dist;
+    }
+};
 class Solution
 {
 
@@ -443,6 +554,89 @@ class Solution
             
         }
         return sum;
+    }
+};
+
+//kruskal's algo
+class disjoint{
+    vector<int> rank, parents;  
+
+    public:
+        disjoint(int size){
+            rank.resize(size+1, 0);
+            parents.resize(size+1);
+            
+            for(int i=0; i<= size; i++){
+                parents[i] = i;
+            }
+        }
+
+        // find parent + pathcompression
+        int findPar(int node){
+            if(node<parents.size() && parents[node] == node)
+                return node;
+
+            return parents[node] = findPar(parents[node]);    
+        }
+
+        //union by rank
+        void unionRank(int u, int v){
+            int ulp_u = findPar(u);
+            int ult_v = findPar(v);
+
+            if(ult_v == ulp_u){
+                return ;
+            }
+
+            if(rank[ult_v] < rank[ulp_u]){
+                parents[ulp_u] = ult_v;
+                return ;
+            }
+
+            if(rank[ult_v] > rank[ulp_u]){
+                parents[ult_v] = ulp_u;
+                return ;
+            }
+
+            parents[ult_v] = ulp_u;
+            rank[ult_v]++;
+            return ;
+            
+        }
+};
+
+class Solution
+{
+	public:
+	//Function to find sum of weights of edges of the Minimum Spanning Tree.
+    int spanningTree(int V, vector<vector<int>> adj[])
+    {
+        vector<pair<int, pair<int, int>>> edges;
+        for(int i=0; i<V; i++){              //o(e)
+            for(auto it: adj[i]){
+                int u = i;
+                int v = it[0];
+                int edgW = it[1];
+                
+                edges.push_back({edgW, {u, v}});
+            }
+        }
+        sort(edges.begin(), edges.end());      //o(eloge)
+        
+        int mst = 0;
+        disjoint d(V);
+          
+        for(auto it: edges){                      //o(e * 4alpha)
+            int node = it.second.first;
+            int adjNode = it.second.second;
+            int weight = it.first;
+            
+            if(d.findPar(node) != d.findPar(adjNode)){
+                d.unionRank(node, adjNode);
+                mst += weight;
+            }
+        }
+        return mst;
     }
 };
 
@@ -778,6 +972,58 @@ class Solution
 	}
 };
 
+
+// kosjaru's algo
+class Solution
+{   
+    
+     void traverse(vector<vector<int>> &adj, int visited[], int index,bool flag ,stack<int> &s){
+        visited[index]=1;
+
+        for(int x: adj[index]){
+            if(visited[x]==0 ){
+                traverse(adj,visited,x, flag, s);
+                   
+            }
+        }
+        
+        if(flag) s.push(index);
+        return ;
+    }
+    
+	public:
+	//Function to find number of strongly connected components in the graph.
+    int kosaraju(int V, vector<vector<int>>& adj)
+    { 
+        stack<int> s;
+        
+        int visited[V] = {0};
+        for(int i=0 ; i<V; i++){
+            if(visited[i] == 0){
+                 traverse(adj, visited, 0, true, s);
+            }
+        }
+        vector<vector<int>> adjT(V);
+        
+        for(int i=0 ; i<V; i++){
+           visited[i] = 0;
+           for(int it: adj[i])
+            adjT[it].push_back(i);
+        }
+        int count = 0;
+        while(!s.empty()){
+            int top = s.top();
+            s.pop();
+            
+            if(visited[top] == 0){
+                count++;
+                traverse(adjT, visited, top, false, s);
+                
+            }
+        }
+        return count;
+    }
+};
 
 
 

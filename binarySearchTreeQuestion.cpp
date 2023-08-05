@@ -74,3 +74,31 @@ public:
         return helper(root,p);
     }
 };
+
+
+// genrate multiple tree in every recursion and then add in previous tree leetcode 95
+class Solution {
+    vector<TreeNode*> BanjaTreeTree(int s, int e){
+        if(s > e) return {NULL};
+        
+        vector<TreeNode*> allTree; 
+        for(int i=s; i<=e; i++){
+            vector<TreeNode*> lTrees = BanjaTreeTree(s, i-1);
+            vector<TreeNode*> rTrees = BanjaTreeTree(i+1, e);
+            
+            for(auto l: lTrees){
+                for(auto r: rTrees){
+                    TreeNode* curr = new TreeNode(i);
+                    curr->left = l;
+                    curr->right = r;
+                    allTree.push_back(curr);
+                }
+            }
+        }
+        return allTree;
+    }
+public:
+    vector<TreeNode*> generateTrees(int n) {
+        return BanjaTreeTree(1, n);
+    }
+};

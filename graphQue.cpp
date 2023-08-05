@@ -6,76 +6,193 @@ using namespace std;
 
 #define MOD 1000000007;
 
-class Solution {
-public:
-    int countPaths(int n, vector<vector<int>>& roads) {
-        vector<pair<int, int>> adj[n];
+class Solution
+{
+    void helper(int node,int parent, vector<int> adj[], int inTime[],int low[], vector<vector<int>> &ans,int &time)
+    {
+        inTime[node] = time;
+        low[node] = time;
+        time++;
+
+        for(int x: adj[node]){
+            if(x == parent) continue;
+            if(inTime[x] != 0){
+                low[node] = min(low[node], low[x]);
+            }else{
+                helper(x, node, adj, inTime, low, ans, time);
+                low[node] = min(low[node], low[x]);
+                if(low[x] > inTime[node]){
+                    ans.push_back({node, x});
+                }
+            }
+        }
         
-        for(auto x: roads){
+    }
+
+public:
+    vector<vector<int>> criticalConnections(int n, vector<vector<int>> &connections)
+    {
+        vector<vector<int>> ans;
+        int insertTime[n] = {0};
+        int low[n];
+        vector<int> adj[n];
+        int time = 1;
+        for (auto x : connections)
+        {
+            adj[x[0]].push_back(x[1]);
+            adj[x[1]].push_back(x[0]);
+        }
+
+        for (int i = 0; i < n; i++)
+        {
+            if (insertTime[i] == 0)
+                helper(i, -1,  adj, insertTime, low, ans, time);
+        }
+
+        return ans;
+    }
+};
+class Solution
+{
+
+    void traverse(vector<vector<int>> &adj, int visited[], int index, bool flag, stack<int> &s)
+    {
+        visited[index] = 1;
+
+        for (int x : adj[index])
+        {
+            if (visited[x] == 0)
+            {
+                traverse(adj, visited, x, flag, s);
+            }
+        }
+
+        if (flag)
+            s.push(index);
+        return;
+    }
+
+public:
+    // Function to find number of strongly connected components in the graph.
+    int kosaraju(int V, vector<vector<int>> &adj)
+    {
+        stack<int> s;
+
+        int visited[V] = {0};
+        for (int i = 0; i < V; i++)
+        {
+            if (visited[i] == 0)
+            {
+                traverse(adj, visited, 0, true, s);
+            }
+        }
+        vector<vector<int>> adjT(V);
+
+        for (int i = 0; i < V; i++)
+        {
+            visited[i] = 0;
+            for (int it : adj[i])
+                adjT[it].push_back(i);
+        }
+        int count = 0;
+        while (!s.empty())
+        {
+            int top = s.top();
+            s.pop();
+
+            if (visited[top] == 0)
+            {
+                count++;
+                traverse(adjT, visited, top, false, s);
+            }
+        }
+        return count;
+    }
+};
+class Solution
+{
+public:
+    int countPaths(int n, vector<vector<int>> &roads)
+    {
+        vector<pair<int, int>> adj[n];
+
+        for (auto x : roads)
+        {
             adj[x[0]].push_back({x[1], x[2]});
             adj[x[1]].push_back({x[0], x[2]});
         }
-        
+
         vector<pair<int, int>> time(n, {1e9, 0});
         set<pair<int, int>> st;
         int ans = 0;
-        
+
         st.insert({0, 0});
         time[0] = {0, 1};
-        
-        while(!st.empty()){
+
+        while (!st.empty())
+        {
             int node = (*st.begin()).second;
             int tm = (*st.begin()).first;
             int count = time[node].second;
 
             st.erase(st.begin());
-                for(auto x: adj[node]){
-                    int child = x.first;
-                    int edjW =x.second;
-                    if(tm + edjW < time[child].first){
-                        time[child] = {tm +edjW, count};
-                        st.insert({tm + edjW, child});
-                    }else if(tm + edjW == time[child].first){
-                        time[x.first].second = (time[x.first].second + count) % MOD;
-                    }
+            for (auto x : adj[node])
+            {
+                int child = x.first;
+                int edjW = x.second;
+                if (tm + edjW < time[child].first)
+                {
+                    time[child] = {tm + edjW, count};
+                    st.insert({tm + edjW, child});
                 }
-            
+                else if (tm + edjW == time[child].first)
+                {
+                    time[x.first].second = (time[x.first].second + count) % MOD;
+                }
+            }
         }
-        return time[n-1].second;
+        return time[n - 1].second;
     }
 };
-class Solution {
+class Solution
+{
 public:
-    int countPaths(int n, vector<vector<int>>& roads) {
+    int countPaths(int n, vector<vector<int>> &roads)
+    {
         vector<pair<int, int>> adj[n];
-        
-        for(auto x: roads){
+
+        for (auto x : roads)
+        {
             adj[x[0]].push_back({x[1], x[2]});
             adj[x[1]].push_back({x[0], x[2]});
         }
-        
+
         vector<pair<int, int>> time(n, {1e9, 0});
         set<pair<int, int>> st;
         int ans = 0;
-        
+
         st.insert({0, 0});
         time[0] = {0, 1};
-        
-        while(!st.empty()){
+
+        while (!st.empty())
+        {
             int node = (*st.begin()).second;
             int tm = (*st.begin()).first;
             st.erase(st.begin());
-                for(auto x: adj[node]){
-                    if(tm + x.second < time[x.first].first){
-                        time[x.first] = {tm + x.second, time[node].second};
-                        st.insert({tm + x.second, x.first});
-                    }else if(tm + x.second == time[x.first].first){
-                        time[x.first].second++;
-                    }
+            for (auto x : adj[node])
+            {
+                if (tm + x.second < time[x.first].first)
+                {
+                    time[x.first] = {tm + x.second, time[node].second};
+                    st.insert({tm + x.second, x.first});
                 }
-            
+                else if (tm + x.second == time[x.first].first)
+                {
+                    time[x.first].second++;
+                }
+            }
         }
-        return time[n-1].second;
+        return time[n - 1].second;
     }
 };
 
