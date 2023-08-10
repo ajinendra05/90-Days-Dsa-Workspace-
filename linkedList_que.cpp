@@ -418,7 +418,26 @@ ListNode *middle(ListNode *head)
     }
 };
 
-
+class Solution {
+     void helper(ListNode* first, ListNode* sec, ListNode* &tail, bool flag){
+        if(first == NULL || sec == NULL) return;
+        
+        first->next = sec->next;
+        first = first->next;
+        sec->next = NULL;
+         if(flag && first) tail = first;
+        helper(sec, first, tail, !flag);
+        
+    }
+public:
+    ListNode* oddEvenList(ListNode* head) {
+        if(head == NULL || head->next == NULL || head->next->next == NULL) return head;
+        ListNode* tail = NULL;
+        helper(head, head->next, tail, true);
+        tail->next = head->next;
+        return head;
+    }
+};
 
 //MERGE SORT MEHNAT VALI 
 /**
@@ -527,7 +546,7 @@ int main()
 {
     LLrecursion list;
     Solution s;
-    cout << s.getSquare(37) << endl;
+    // cout << s.getSquare(37) << endl;
     list.insert(12, 0);
     list.insert(15, 1);
     list.display();

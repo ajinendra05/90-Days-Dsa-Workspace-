@@ -524,6 +524,220 @@ public:
     }
 };
 
+//combination sum 1 not dp only backtracking
+class Solution {
+   void solve(vector<int>& candidates, int remTar, vector<int> curr, set<vector<int>>& ans){
+        if(remTar < 0) return;
+        if(remTar == 0){
+            ans.insert(curr);
+            return;
+        }
+        
+       
+       for(int x: candidates){
+           curr.push_back(x);
+           solve(candidates, remTar - x, curr, ans);
+           curr.pop_back();
+       }
+    }
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        // unordered_map<int, vector<vector<int>>> mp;
+        
+        set<vector<int>> temp;
+        
+        solve(candidates, target, {}, temp);
+        vector<vector<int>> ans(temp.begin(), temp.end());
+        return ans;
+    }
+};
+
+//Combination Sum IV
+
+class Solution {
+    int solve(vector<int>& nums, int target, vector<int>& dp){
+        if(target == 0) return 1;
+        if(target < 0) return 0;
+       
+        if(dp[target] != -1) return dp[target];
+        int ans = 0;
+        for(int i = 0; i< nums.size(); i++){
+            if(nums[i] <= target){
+                ans += solve(nums, target - nums[i], dp);
+            }
+        }
+        
+        dp[target] = ans;
+        return dp[target];
+    }
+
+    
+    int solve2(vector<int>& nums, int target, vector<long long>& dp){
+        
+        dp[0] = 1;
+       
+        for(int i = 1; i<= target; i++){
+            for(auto x: nums){
+                if(i - x >= 0 )
+                    dp[i] = (dp[i] + dp[i - x]) % INT_MAX;
+            }
+        }
+        return dp[target];
+    }
+    
+
+public:
+    int combinationSum4(vector<int>& nums, int target) {
+        // vector<int> dp(target+1, -1);
+        // return solve(nums, target, dp);
+        vector<long long> dp(target+1, 0);
+        return solve2(nums, target, dp);        
+    }
+};
+
+// 279. Perfect Squares
+class Solution {
+    int solve(int n, vector<int>& dp){
+        if(n == 0) return 0;  //number of way to get 0 from perfect square is 0;
+        
+        if(dp[n] != -1) return dp[n];
+        
+        int ways = INT_MAX;
+        for(int i = 1; i*i <= n; i++){
+            ways = min(ways, solve(n - (i*i), dp) + 1);
+        }
+        
+        dp[n] = ways;
+        return dp[n];
+    }
+    
+    int solve2(int n){
+        vector<int> dp(n+1, INT_MAX);
+        dp[0] = 0;
+        
+        for(int i=1; i<=n; i++){
+            
+            for(int j = 1; j*j <= n; j++){
+                if(i - j*j >= 0)
+                dp[i] = min(dp[i], dp[i - (j*j)] + 1);
+            }
+        }
+        return dp[n];
+    }    
+    
+public:
+    int numSquares(int n) {
+        vector<int> dp(n+1, -1);
+        return solve2(n);
+    }
+};
+
+//983 minimum cost 
+class Solution {
+    // O(n), O(n + n)
+    int solve(vector<int>& days, vector<int>& costs, vector<int>& dp, int s){
+        
+        if(s >= days.size()) return 0;
+        
+        if(dp[s] != -1) return dp[s];
+        
+        int currDay = days[s];
+        int nextDays[] = {currDay, currDay+6, currDay+29};
+        int amount = INT_MAX;
+        
+        for(int i=0; i<3; i++){
+            int k = s;
+            while(k<days.size() && days[k] <= nextDays[i]) 
+                k++;
+            
+            amount = min(amount, costs[i] + solve(days, costs, dp, k));
+            
+        }
+        
+        dp[s] = amount;
+        return dp[s];
+    }
+    
+    
+    int solve2(vector<int>& days, vector<int>& costs, vector<int>& dp, int index){
+        
+        int n = days.size();
+        if(index >= days.size()) return 0;
+        
+        if(dp[index] != -1) return dp[index];
+        
+        int currDay = days[index];
+        
+        int opt1 = costs[0] + solve2(days, costs, dp, index+1);   //1 daay
+        
+        int i;
+        
+        for(i = index; i<n && days[i] < currDay+7; i++);
+        
+        int opt2 = costs[1] + solve2(days, costs, dp, i);      //7 day
+        
+        for(i = index; i<n && days[i] < currDay+30; i++);
+        
+        int opt3 = costs[2] + solve2(days, costs, dp, i);     //30 day
+        
+        return dp[index] = min(opt1, min(opt2, opt3));
+        
+        
+    }
+    //O(n), O(n)  tabulation
+        int solve3(vector<int>& days, vector<int>& costs){
+        
+            int n = days.size();
+            vector<int> dp(n+1, INT_MAX);
+
+            dp[n] = 0;
+
+            
+            for(int ind = n-1; ind >= 0; ind--){
+                int currDay = days[ind];
+                int nextDays[] = {currDay, currDay+6, currDay+29};
+
+                for(int i=0; i<3; i++){
+                    int k = ind;
+                    while(k < n && days[k] <= nextDays[i]) 
+                        k++;
+
+                    dp[ind] = min(dp[ind], costs[i] + dp[k]);
+
+                }
+
+            }
+
+            return dp[0];
+    }
+    
+     // space optimization
+    int solve4(vector<int>& days, vector<int>& costs){
+        int ans =0;
+        queue<pair<int, int>> week, month;
+        
+        for(int day: days){
+            while(!week.empty() && week.front().first+7 <= day)
+                week.pop();
+            while(!month.empty() && month.front().first+30 <= day)
+                month.pop();
+            
+            week.push({day, ans + costs[1]});
+            month.push({day, ans + costs[2]});
+            
+            ans = min(ans + costs[0], min(week.front().second, month.front().second));
+                
+        }
+        return ans;
+    }
+public:
+    int mincostTickets(vector<int>& days, vector<int>& costs) {
+        int n = days.size();
+        vector<int> dp(n+1, -1);
+        // return solve(days, costs, dp, 0);
+        return solve4(days, costs);
+    }
+};
 // 2D DP
 class Solution
 {
@@ -580,8 +794,13 @@ class Solution
         
         vector<vector<int>> dp(n, vector<int>(W+1, 0));
         
-        for(int w=wt[0]; w<=W; w++){
-            if(wt[0] <= W) dp[0][w] = val[0];
+        //both are same but this is optimized way
+        // for(int w=wt[0]; w<=W; w++){
+        //     if(wt[0] <= W) dp[0][w] = val[0];
+        // }
+        // its concept behind that
+        for(int w=0; w<=W; w++){
+            if(wt[0] <= w) dp[0][w] = val[0];
         }
         
         for(int i=1; i<n; i++){
@@ -667,5 +886,320 @@ class Solution
         
         // return solve2(W, wt, val, n-1, dp);
         return solve4(W, wt, val, n);
+    }
+};
+
+// que 6 ninjas training 
+
+int solve(int ind, vector<vector<int>> &points, int prev,
+vector<vector<int>>& dp){
+   
+    if(ind == 0){
+        int maxi = INT_MIN;
+        for(int i=0; i<points[0].size(); i++ ){
+            if(i != prev) maxi = max(maxi, points[ind][i]);
+        }
+        return maxi;
+    }
+    
+    if( dp[ind][prev] != -1) return dp[ind][prev];
+
+    int maxi = INT_MIN;
+    
+    for(int i=0; i<points[0].size(); i++ ){
+        if(i != prev){
+            maxi = max(maxi, points[ind][i] + solve(ind-1, points, i, dp));
+        }
+    }
+    dp[ind][prev] = maxi;
+    return maxi;
+}
+
+
+int solve2(int n, vector<vector<int>> &points){
+    vector<vector<int>> dp(n+1, vector<int>(points[0].size()+1, -1));
+
+    dp[0][0] =  max(points[0][1], points[0][2]);
+    dp[0][1] = max(points[0][0], points[0][2]);
+    dp[0][2] = max(points[0][1], points[0][0]);
+    dp[0][3] = max(points[0][1], max(points[0][1], points[0][2]));
+
+    
+    
+    for(int day = 1; day < n; day++){
+        for(int prev = 0; prev < 4; prev++){
+            int maxi = INT_MIN;
+            for(int i=0; i<points[0].size(); i++ ){
+                if(i != prev){
+                    maxi = max(maxi, points[day][i] + dp[day-1][i] );
+                }
+            }
+            dp[day][prev] = maxi;
+        }
+
+    }
+
+    return dp[n-1][3];
+}
+
+
+int ninjaTraining(int n, vector<vector<int>> &points)
+{
+    // Write your code here.
+    return solve2(n, points);
+    vector<vector<int>> dp(n+1, vector<int>(points[0].size()+1, -1));
+    return solve(n-1, points, 3, dp);
+}
+
+// 221 maximal square
+class Solution {
+    // O(m*n) O(m*n)
+    int solve(vector<vector<char>>& matrix, int i, int j, int& ans, vector<vector<int>>& dp){
+        if(i >= matrix.size() || j >= matrix[0].size())
+            return 0;          //we cant make square outside
+        
+        if(dp[i][j] != -1) return dp[i][j];
+        int right = solve(matrix, i+1, j, ans, dp);
+        int down = solve(matrix, i, j+1, ans, dp);
+        int digo = solve(matrix, i+1, j+1, ans, dp);
+        
+        if(matrix[i][j] == '1'){
+            int curr = 1 + min(digo, min(down, right));
+            ans = max(ans, curr);
+            dp[i][j] = curr;
+            return curr;
+        }   
+        
+        return 0;    
+        
+    }
+    
+    //tabulation  O(m*n) O(m*n)
+    void solve2(vector<vector<char>>& matrix, int& ans){
+        int n =matrix.size();
+        int m = matrix[0].size();
+        vector<vector<int>> dp(n+1, vector<int>(m+1, 0));
+          
+        for(int i = n-1; i>=0; i--){
+            for(int j = m-1; j>=0; j--){
+                
+                int right = dp[i+1][j];
+                int down = dp[i][j+1];
+                int digo = dp[i+1][j+1];
+
+                if(matrix[i][j] == '1'){
+                    dp[i][j] = 1 + min(digo, min(down, right));
+                    ans = max(ans, dp[i][j]);
+                }   
+            }
+        }
+      
+    }    
+    
+    //space optimization
+    void solve3(vector<vector<char>>& matrix, int& ans){
+        int n =matrix.size();
+        int m = matrix[0].size();
+        // vector<vector<int>> dp(2, vector<int>(m+1, 0));
+          
+        vector<int> next(m+1, 0);
+        
+        for(int i = n-1; i>=0; i--){
+            vector<int> curr(m+1, 0);
+            for(int j = m-1; j>=0; j--){
+                
+                int right = next[j];
+                int down = curr[j+1];
+                int digo = next[j+1];
+
+                if(matrix[i][j] == '1'){
+                    curr[j] = 1 + min(digo, min(down, right));
+                    ans = max(ans, curr[j]);
+                }   
+            }
+            // dp[1] = dp[0];
+            next = curr;
+        }
+      
+    } 
+public:
+    int maximalSquare(vector<vector<char>>& matrix) {
+        int n =matrix.size();
+        int m = matrix[0].size();
+        vector<vector<int>> dp(n+1, vector<int>(m+1, -1));
+        int ans = 0;
+        // solve(matrix, 0, 0, ans, dp);
+        solve3(matrix, ans);
+        return ans*ans;
+    }
+};
+
+// 1824
+class Solution {
+    int solve(vector<int>& obs, int index, int currLane, vector<vector<int>>& dp){
+        if(index >= (obs.size() - 2)) return 0;
+        
+        if(dp[index][currLane] != -1) return dp[index][currLane];
+        
+        int curr = INT_MAX;
+        if(obs[index + 1] != currLane){
+            curr = solve(obs, index + 1, currLane, dp);
+        }else{
+            for(int i = 1; i <= 3; i++){
+                if(currLane != i && obs[index] != i){
+                    curr = min(curr, solve(obs, index, i, dp) + 1);
+                    }
+            }
+        }
+        
+        dp[index][currLane] = curr;
+        return curr;
+    }
+    
+     int solve2(vector<int>& obs){
+         
+         int n = obs.size();
+        vector<vector<int>> dp(n+1, vector<int>(4, 1e9));
+         
+        dp[n-1][0] = dp[n-1][1] = dp[n-1][2] = dp[n-1][3] = 0;
+        
+        for(int index = n-2; index >= 0; index--){
+            for(int k = 1; k <= 3; k++ ){
+                
+                if(obs[index + 1] != k){
+                    dp[index][k] = dp[index + 1][k];
+                }else{
+                    int curr = INT_MAX;
+                    for(int i = 1; i <= 3; i++){
+                        if(k != i && obs[index] != i){
+                             curr = min(curr, dp[index+1][i] + 1);            //index + 1 is extra from memorization because of we can take i = 3 for k = 1 but it's  not calculated yet for current index that's why we take i =  of index +1;
+                            }
+                    }
+                    dp[index][k] = curr;
+                }
+
+            }
+            
+        }        
+        
+        return min(dp[0][2], min(dp[0][1] + 1, dp[0][3] + 1));
+    }   
+     int solve3(vector<int>& obs){
+         
+         int n = obs.size();
+         vector<int> prev(4, 0);
+         vector<int> curr(4, 1e9);
+
+
+        for(int index = n-2; index >= 0; index--){
+            for(int k = 1; k <= 3; k++ ){
+
+                if(obs[index + 1] != k){
+                    curr[k] = prev[k];
+                }else{
+                    int ans = INT_MAX;
+                    for(int i = 1; i <= 3; i++){
+                        if(k != i && obs[index] != i){
+                             ans = min(ans, prev[i] + 1);            //index + 1 is extra from memorization because of we can take i = 3 for k = 1 but it's  not calculated yet for current index that's why we take i =  of index +1;
+                            }
+                    }
+                    curr[k] = ans;
+                    prev = curr;
+                }
+
+            }
+
+        }        
+
+        return min(curr[2], min(curr[1] + 1, curr[3] + 1));
+    }   
+public:
+    int minSideJumps(vector<int>& obstacles) {
+        // int n = obstacles.size();
+        // vector<vector<int>> dp(n, vector<int>(4, -1));
+        // return solve(obstacles, 0, 2, dp);
+        return solve3(obstacles);
+    }
+};
+
+            // if(currLane == 1){
+            //     if(obs[index] != 2)
+            //         curr = solve(obs, index, 2, dp) + 1;
+            //     if(obs[index] != 3)
+            //         curr = min(curr, solve(obs, index, 3, dp) + 1);
+            // }
+            // if(currLane == 2){
+            //     if(obs[index] != 1)
+            //         curr = solve(obs, index, 1, dp) + 1;
+            //     if(obs[index] != 3)
+            //         curr = min(curr, solve(obs, index, 3, dp) + 1);
+            // }
+            // if(currLane == 3){
+            //     if(obs[index] != 2)
+            //         curr = solve(obs, index, 2, dp) + 1;
+            //     if(obs[index] != 1)
+            //         curr = min(curr, solve(obs, index, 1, dp) + 1);
+            // }
+
+// dises satisfaction
+class Solution {
+//     int solve(vector<int>& sati, int ind, int dishTaken){
+//         if(ind == sati.size()) return 0;
+        
+//         int incl = (dishTaken*sati[ind]) + solve(sati, ind + 1, dishTaken + 1);
+//         int excl = solve(sati, ind + 1, dishTaken);
+        
+//         int ans = max(incl, excl);
+//         return ans; 
+//     }
+    int solve2(vector<int>& sati, int ind, int dishTaken,  vector<vector<int>>& dp){
+        if(ind == sati.size()) return 0;
+        
+        if(dp[ind][dishTaken] != -1) return dp[ind][dishTaken];
+        
+        int incl = (dishTaken*sati[ind]) + solve2(sati, ind + 1, dishTaken + 1, dp);
+        int excl = solve2(sati, ind + 1, dishTaken, dp);
+        dp[ind][dishTaken] = max(incl, excl);
+        return dp[ind][dishTaken];
+    }    
+    int solve3(vector<int>& sati){
+        int n = sati.size();
+        vector<vector<int>> dp(n+1, vector<int>(n+1, 0));
+        
+        for(int ind = n - 1; ind >= 0; ind--){
+            for(int dishTaken = n-1; dishTaken >= 0; dishTaken-- ){
+                int incl = ((dishTaken+1)*sati[ind]) + dp[ind+1][dishTaken+1];
+                int excl = dp[ind+1][dishTaken];
+                dp[ind][dishTaken] = max(incl, excl);
+            }
+        }
+        
+        return dp[0][0];
+    }
+    int solve4(vector<int>& sati){
+        int n = sati.size();
+        // vector<vector<int>> dp(n+1, vector<int>(n+1, 0));
+        vector<int> curr(n+1, 0);
+        vector<int> next(n+1, 0);
+        
+        for(int ind = n - 1; ind >= 0; ind--){
+            for(int dishTaken = n-1; dishTaken >= 0; dishTaken-- ){
+                int incl = ((dishTaken+1)*sati[ind]) + next[dishTaken+1];
+                int excl = next[dishTaken];
+                curr[dishTaken] = max(incl, excl);
+               
+            } 
+             next = curr;
+        }
+        
+        return curr[0];
+    } 
+public:
+    int maxSatisfaction(vector<int>& satisfaction) {
+        sort(satisfaction.begin() ,satisfaction.end());
+        // int n = satisfaction.size();
+        // vector<vector<int>> dp(n+1, vector<int>(n+1, -1));
+        // return solve2(satisfaction, 0, 1, dp);
+        return solve4(satisfaction);
     }
 };

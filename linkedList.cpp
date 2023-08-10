@@ -858,6 +858,8 @@ public:
         head = prev;
         return head;
     }
+    
+    //reverse between given range
     ListNode *reverseBetween(ListNode *head, int left, int right)
     {
         ListNode *prev1 = NULL;
@@ -890,6 +892,129 @@ public:
         }
         return head;
     }
+    ListNode* reverseBetween(ListNode* head, int left, int right) {
+        if(!head)   return NULL;
+        if(!head->next) return head;
+
+        ListNode *dummy = new ListNode(0);
+        dummy->next = head;
+        ListNode *prev = dummy;
+
+        for(int i = 0; i < left - 1; i++)    prev = prev->next;
+        ListNode *curr = prev->next;
+
+        for(int i = 0; i < right - left; i++)
+        {
+            ListNode *forw = curr->next;
+            curr->next = forw->next;
+            forw->next = prev->next;
+            prev->next = forw;
+        }
+        return dummy->next;
+
+        
+        
+    }
+
+    // merge a sorted linked list
+    //inplace
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        if(list1 == NULL) return list2;
+        if(list2 == NULL) return list1;
+        
+        if(list1->val > list2->val) swap(list1, list2);
+        ListNode* head = list1;
+
+        while(list1 && list2){
+            ListNode* tmp = NULL;
+            
+            while(list1 && list1->val <= list2->val){
+                tmp = list1;
+                list1 = list1->next;
+            }
+            tmp->next = list2;
+            swap(list1, list2);
+        }
+        
+        return head;
+    }
+    // merge any linked list
+    void mergeList(ListNode* head1, ListNode* head2){
+        ListNode* temp1, *temp2;
+        while(head1 && head2){
+            temp1 = head1->next;
+            head1->next = head2;
+            head1 = temp1;
+            swap(head1, head2);
+        }
+    }
+    // 2nd way to merge them
+        void mergeList2(ListNode* head1, ListNode* head2){
+        ListNode* temp;
+        while(head1 && head2){
+            temp = head1->next;
+            head1->next = head2;
+            head1 = temp;
+            
+            temp = head2->next;
+            head2->next = head1;
+            head2 = temp;
+            
+        }
+    }
+    // add two numbers
+    class Solution {
+    ListNode* addNumbers(ListNode* l1, ListNode* l2, int rem) {
+        if(l1 == NULL && l2 == NULL && rem == 0) return NULL;
+        int sum = 0;
+        if(l1 != NULL){
+            sum += l1->val;
+            l1 = l1->next;
+        }
+        if(l2 != NULL){
+            sum += l2->val;
+            l2 = l2->next;
+        }
+        sum += rem;
+        rem = sum / 10;
+        ListNode* curr = new ListNode(sum % 10);
+        curr->next = addNumbers(l1, l2, rem);
+        return curr;
+        
+    }
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        return addNumbers(l1, l2, 0);
+    }
+};
+class Solution {
+ 
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        
+        ListNode* dummy = new ListNode(1);
+        ListNode* temp = dummy;
+        int rem = 0, sum = 0;
+        while(!(l1 == NULL && l2 == NULL && rem == 0)){
+            
+            sum = 0;
+            if(l1 != NULL){
+                sum += l1->val;
+                l1 = l1->next;
+            }
+            if(l2 != NULL){
+                sum += l2->val;
+                l2 = l2->next;
+            }
+            sum += rem;
+            rem = sum / 10;
+            temp->next = new ListNode(sum % 10);
+            temp = temp->next;
+        }
+        return dummy->next;
+    }
+};
+
     bool hasCycle(ListNode *head)
     {
 
@@ -1668,6 +1793,56 @@ public:
         d2->next = NULL;
 
         return left->next;
+    }
+};
+class BrowserHistory {
+    class Node{
+        
+        public: 
+        string url;
+        Node* prev;
+        Node* next;
+        Node(string url){
+            this->url = url;
+            prev = NULL;
+            next = NULL;
+        }
+    };
+    Node* curr;
+public:
+    BrowserHistory(string homepage) {
+        curr = NULL;
+    }
+    
+    void visit(string url) {
+        curr->next = new Node(url);
+        curr->next->prev = curr;
+    }
+    
+    string back(int steps) {
+        Node* temp = curr;
+        while(steps-- && temp->prev){
+            temp = temp->prev;
+        }
+        if(!steps){
+            curr = temp;
+            return curr->url;
+        }
+
+        return "";
+    }
+    
+    string forward(int steps) {
+        Node* temp = curr;
+        while(steps-- && temp->next){
+            temp = temp->next;
+        }
+        if(!steps){
+            curr = temp;
+            return curr->url;
+        }
+
+        return "";
     }
 };
 

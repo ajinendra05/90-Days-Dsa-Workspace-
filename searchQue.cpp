@@ -461,7 +461,38 @@ public:
         return -1;
     }
 };
+// search in roated array 
+//without finding pivit
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int n = nums.size();
+        int s = 0, e = n-1;
+        
+        while(s <= e){
+            int m = (s+e) / 2;
+            
+            if(target == nums[m]) return m;
+            if(nums[s] <= nums[m]){     // we're in first part
+                if(target >= nums[s] && target <= nums[m])
+                    e = m-1;              
+                else
+                    s = m+1;
+            } 
+            // we're in 2nd half 
+            else {                              
+                if(nums[m] <= target && nums[e] >= target)
+                    s = m + 1;
+                else
+                    e = m - 1;
+            }
+        }
+        
+        return -1;
+    }
+};
 
+// after finding pivit
 class Solution
 {
 
